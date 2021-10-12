@@ -1,7 +1,13 @@
-import '../styles/globals.css'
-import type { AppProps } from 'next/app'
+import "../styles/globals.css";
+
+import type { AppProps } from "next/app";
+import { GoogleAuthManagerProvider } from "../auth/google/google-auth.context";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+  return (
+    <GoogleAuthManagerProvider>
+      <Component {...pageProps} />
+    </GoogleAuthManagerProvider>
+  );
 }
-export default MyApp
+export default MyApp;
