@@ -1,10 +1,10 @@
-export type RawSheet = {
+export type RawWorksheetData = {
   majorDimension: string;
   range: string;
   values: string[][];
 };
 
-export type Sheet = {
+export type WorksheetData = {
   header: string[];
   rows: string[][];
 };

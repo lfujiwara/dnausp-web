@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 
 import { GoogleSheetsConstants } from "../constants/google-sheets.constants";
-import { fetchSheet } from "../lib/sheets/fetch-sheet";
+import { SpreadsheetWorksheetSelector } from "../components/sheets/SpreadsheetSelector";
+import { fetchWorksheet } from "../lib/sheets/fetch-worksheet";
 import { useGoogleAuthManager } from "../auth/google/google-auth.context";
+import { useSpreadsheetWorksheetSelector } from "../hooks/useSpreadsheetWorksheetSelector";
+import { useWorksheetFetcher } from "../hooks/useWorksheetFetcher";
 
 const Login = () => {
   const { signIn, isAuthLoaded } = useGoogleAuthManager();
@@ -17,25 +20,36 @@ const Login = () => {
 
 const Logado = () => {
   const { data } = useGoogleAuthManager();
-  const [state, setState] = useState<any>(undefined);
-  useEffect(() => {
-    fetchSheet(
-      GoogleSheetsConstants.defaultSheetId,
-      GoogleSheetsConstants.defaultWorksheetId,
-      data.accessToken
-    ).then((r) =>
-      setState({
-        length: r.rows.length,
-      })
-    );
-  }, []);
+
+  const spreadsheetWorksheetSelector = useSpreadsheetWorksheetSelector();
+  const { spreadsheetId, selectedWorksheet, isLoaded } =
+    spreadsheetWorksheetSelector;
+  const worksheetFetcher = useWorksheetFetcher();
+
   return (
     <div>
       <p>Olá, {data.profile.name}, você está logado.</p>
-      {state ? (
-        <p>Planilha com {state.length} registros.</p>
-      ) : (
-        <p>Carregando planilha...</p>
+      <SpreadsheetWorksheetSelector {...spreadsheetWorksheetSelector} />
+      {isLoaded && spreadsheetId && selectedWorksheet && (
+        <div>
+          <p>
+            Você está visualizando a planilha: {spreadsheetId} -{" "}
+            {selectedWorksheet}
+          </p>
+          <button
+            onClick={() =>
+              worksheetFetcher.fetch(spreadsheetId, selectedWorksheet)
+            }
+          >
+            Fetch Worksheet
+          </button>
+          {worksheetFetcher.isLoading && (
+            <div>Carregando dados da planilha...</div>
+          )}
+          {worksheetFetcher.isLoaded && (
+            <div>Planilha com {worksheetFetcher.data?.rows.length} linhas</div>
+          )}
+        </div>
       )}
     </div>
   );
