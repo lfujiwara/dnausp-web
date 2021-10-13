@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { Box, Container } from "@chakra-ui/react";
+import {
+  useGoogleAuthData,
+  useGoogleAuthManager,
+} from "../auth/google/google-auth.context";
 
-import { GoogleSheetsConstants } from "../constants/google-sheets.constants";
+import { RequireGoogleLogin } from "../components/layout/RequireGoogleLogin";
 import { SpreadsheetWorksheetSelector } from "../components/sheets/SpreadsheetSelector";
-import { fetchWorksheet } from "../lib/sheets/fetch-worksheet";
-import { useGoogleAuthManager } from "../auth/google/google-auth.context";
 import { useSpreadsheetWorksheetSelector } from "../hooks/useSpreadsheetWorksheetSelector";
 import { useWorksheetFetcher } from "../hooks/useWorksheetFetcher";
 
@@ -19,8 +21,6 @@ const Login = () => {
 };
 
 const Logado = () => {
-  const { data } = useGoogleAuthManager();
-
   const spreadsheetWorksheetSelector = useSpreadsheetWorksheetSelector();
   const { spreadsheetId, selectedWorksheet, isLoaded } =
     spreadsheetWorksheetSelector;
@@ -28,7 +28,6 @@ const Logado = () => {
 
   return (
     <div>
-      <p>Olá, {data.profile.name}, você está logado.</p>
       <SpreadsheetWorksheetSelector {...spreadsheetWorksheetSelector} />
       {isLoaded && spreadsheetId && selectedWorksheet && (
         <div>
@@ -55,23 +54,37 @@ const Logado = () => {
   );
 };
 
-const Carregando = () => {
-  return <div>Carregando...</div>;
+const GreetingHoc = () => {
+  const {
+    profile: { givenName },
+  } = useGoogleAuthData();
+
+  return <Greeting name={givenName} />;
 };
 
-const Error = () => {
-  return <div>Erro ao carregar</div>;
+const Greeting = ({ name }: { name: string }) => {
+  return (
+    <Box textAlign="center">
+      Olá, {name}, você entrou com sua conta Google com sucesso.
+    </Box>
+  );
+};
+
+const InnerPage = () => {
+  return (
+    <Container py="6">
+      <GreetingHoc />
+      <Logado />
+    </Container>
+  );
 };
 
 export default function SheetsPage() {
   const { isError, isLoading, isSignedIn } = useGoogleAuthManager();
 
   return (
-    <>
-      {isSignedIn && <Logado />}
-      {!isSignedIn && <Login />}
-      {isLoading && <Carregando />}
-      {isError && <Error />}
-    </>
+    <RequireGoogleLogin>
+      <InnerPage />
+    </RequireGoogleLogin>
   );
 }

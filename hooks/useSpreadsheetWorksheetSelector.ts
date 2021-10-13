@@ -39,8 +39,14 @@ export const useSpreadsheetWorksheetSelector =
       selectedWorksheet: "",
     });
 
-    const loadSpreadsheetMetadata = (spreadsheetId: string) =>
-      fetchSpreadsheetMetadata(spreadsheetId, accessToken)
+    const loadSpreadsheetMetadata = (spreadsheetId: string) => {
+      setState({
+        ...state,
+        isLoading: true,
+        isError: false,
+        isLoaded: false,
+      });
+      return fetchSpreadsheetMetadata(spreadsheetId, accessToken)
         .then((spreadsheetMetadata) =>
           setState({
             ...state,
@@ -60,6 +66,7 @@ export const useSpreadsheetWorksheetSelector =
             isError: true,
           })
         );
+    };
 
     const setSelectedWorksheet = (selectedWorksheet: string) =>
       setState({
