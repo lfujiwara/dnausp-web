@@ -81,6 +81,7 @@ export const GoogleAuthManagerProvider: React.FC<any> = ({ children }) => {
     onRequest: onSignInRequest,
     onSuccess: onSignInSuccess as any,
     onFailure: onSignInFailure,
+    scope: "https://www.googleapis.com/auth/spreadsheets.readonly",
   });
   const { signOut, loaded: loadedSignOut } = useGoogleLogout({
     ...GoogleLoginConstants,
