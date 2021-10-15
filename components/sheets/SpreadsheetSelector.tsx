@@ -21,13 +21,14 @@ export const SpreadsheetWorksheetSelector = ({
     <Box shadow="md" p="4" rounded="md">
       <div>
         <Text>
-          Digite o ID da planilha e clique no botão para carregar os metadados.
+          Digite o ID da planilha ou insira o link e clique no botão para
+          carregar os metadados.
         </Text>
         <HStack align="center" spacing="2" py="4">
           <Input
             ref={ref}
             type="text"
-            placeholder="ID da planilha"
+            placeholder="ID ou URL da planilha"
             borderColor={isError ? "red.500" : undefined}
           />
           <Button

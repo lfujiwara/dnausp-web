@@ -6,9 +6,15 @@ import {
 import { FetchHeaders } from "../common/fetch-headers";
 
 export const fetchSpreadsheetMetadata = (
-  spreadsheetId: string,
+  _spreadsheetId: string,
   token: string
 ): Promise<SpreadsheetMetadata> => {
+  let firstIndex = _spreadsheetId.indexOf("/d/");
+  firstIndex = firstIndex === -1 ? 0 : firstIndex + 3;
+  let lastIndex = _spreadsheetId.lastIndexOf("/");
+  lastIndex = lastIndex === -1 ? _spreadsheetId.length : lastIndex;
+
+  const spreadsheetId = _spreadsheetId.slice(firstIndex, lastIndex);
   return fetch(
     `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}`,
     {
