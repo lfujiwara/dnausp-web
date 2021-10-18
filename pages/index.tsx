@@ -1,22 +1,66 @@
-import { Box, Container } from "@chakra-ui/react";
 import {
-  useGoogleAuthData,
-  useGoogleAuthManager,
-} from "../auth/google/google-auth.context";
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  Box,
+  Button,
+  CloseButton,
+  Container,
+  HStack,
+  Heading,
+  ScaleFade,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
 
+import { Card } from "../components/layout/elements/Card";
 import { RequireGoogleLogin } from "../components/layout/RequireGoogleLogin";
 import { SpreadsheetWorksheetSelector } from "../components/sheets/SpreadsheetSelector";
+import { useEffect } from "react";
+import { useGoogleAuthData } from "../auth/google/google-auth.context";
 import { useSpreadsheetWorksheetSelector } from "../hooks/useSpreadsheetWorksheetSelector";
 import { useWorksheetFetcher } from "../hooks/useWorksheetFetcher";
 
-const Login = () => {
-  const { signIn, isAuthLoaded } = useGoogleAuthManager();
+const VisualizeWorksheet = ({
+  spreadsheetId,
+  worksheet,
+}: {
+  spreadsheetId: string;
+  worksheet: string;
+}) => {
+  const worksheetFetcher = useWorksheetFetcher();
+
+  useEffect(() => {
+    worksheetFetcher.reset();
+  }, [spreadsheetId, worksheet]);
+
+  const fetchData = () => worksheetFetcher.fetch(spreadsheetId, worksheet);
+
   return (
-    <div>
-      <button disabled={!isAuthLoaded} onClick={signIn}>
-        Login
-      </button>
-    </div>
+    <Card>
+      <HStack alignItems="stretch">
+        <Box flex="1">
+          <Text fontSize="lg" fontWeight="medium">
+            {worksheet}
+          </Text>
+          <Text>{spreadsheetId}</Text>
+        </Box>
+        <Button
+          onClick={fetchData}
+          isLoading={worksheetFetcher.isLoading}
+          colorScheme="blue"
+          height="unset"
+        >
+          Carregar dados
+        </Button>
+      </HStack>
+      {worksheetFetcher.isError && (
+        <Alert status="error">Erro ao carregar dados</Alert>
+      )}
+      {worksheetFetcher.isLoaded && (
+        <div>Planilha com {worksheetFetcher.data?.rows.length} linhas</div>
+      )}
+    </Card>
   );
 };
 
@@ -24,31 +68,14 @@ const Logado = () => {
   const spreadsheetWorksheetSelector = useSpreadsheetWorksheetSelector();
   const { spreadsheetId, selectedWorksheet, isLoaded } =
     spreadsheetWorksheetSelector;
-  const worksheetFetcher = useWorksheetFetcher();
-
   return (
     <div>
       <SpreadsheetWorksheetSelector {...spreadsheetWorksheetSelector} />
       {isLoaded && spreadsheetId && selectedWorksheet && (
-        <div>
-          <p>
-            Você está visualizando a planilha: {spreadsheetId} -{" "}
-            {selectedWorksheet}
-          </p>
-          <button
-            onClick={() =>
-              worksheetFetcher.fetch(spreadsheetId, selectedWorksheet)
-            }
-          >
-            Fetch Worksheet
-          </button>
-          {worksheetFetcher.isLoading && (
-            <div>Carregando dados da planilha...</div>
-          )}
-          {worksheetFetcher.isLoaded && (
-            <div>Planilha com {worksheetFetcher.data?.rows.length} linhas</div>
-          )}
-        </div>
+        <VisualizeWorksheet
+          spreadsheetId={spreadsheetId}
+          worksheet={selectedWorksheet}
+        />
       )}
     </div>
   );
@@ -63,10 +90,18 @@ const GreetingHoc = () => {
 };
 
 const Greeting = ({ name }: { name: string }) => {
+  const { isOpen, onClose } = useDisclosure({ defaultIsOpen: true });
+
   return (
-    <Box textAlign="center">
-      Olá, {name}, você entrou com sua conta Google com sucesso.
-    </Box>
+    <ScaleFade in={isOpen}>
+      <Alert status="success" rounded="md" position="absolute" width="auto">
+        <AlertIcon />
+        <AlertTitle mr={2}>
+          Olá, {name}. Você entrou com sua conta Google com sucesso.
+        </AlertTitle>
+        <CloseButton onClick={onClose} />
+      </Alert>
+    </ScaleFade>
   );
 };
 
@@ -80,8 +115,6 @@ const InnerPage = () => {
 };
 
 export default function SheetsPage() {
-  const { isError, isLoading, isSignedIn } = useGoogleAuthManager();
-
   return (
     <RequireGoogleLogin>
       <InnerPage />

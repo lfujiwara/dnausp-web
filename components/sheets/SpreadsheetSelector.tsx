@@ -1,9 +1,11 @@
+import { Alert, AlertIcon } from "@chakra-ui/alert";
 import { Box, HStack, Text } from "@chakra-ui/layout";
 
 import { Button } from "@chakra-ui/button";
-import { FormControl } from "@chakra-ui/react";
 import { Input } from "@chakra-ui/input";
+import { Select } from "@chakra-ui/select";
 import { TSpreadsheetWorksheetSelector } from "../../hooks/useSpreadsheetWorksheetSelector";
+import { parseSpreadsheetId } from "../../lib/sheets/parse-spreadsheet-id";
 import { useRef } from "react";
 
 export const SpreadsheetWorksheetSelector = ({
@@ -32,7 +34,11 @@ export const SpreadsheetWorksheetSelector = ({
             borderColor={isError ? "red.500" : undefined}
           />
           <Button
-            onClick={() => loadSpreadsheetMetadata(ref.current?.value || "")}
+            onClick={() =>
+              loadSpreadsheetMetadata(
+                parseSpreadsheetId(ref.current?.value || "")
+              )
+            }
             isLoading={isLoading}
           >
             Carregar
@@ -41,15 +47,20 @@ export const SpreadsheetWorksheetSelector = ({
       </div>
       {isLoaded && (
         <Box>
-          <div>ID: {spreadsheetId}</div>
-          <div>{spreadsheetMetadata?.title}</div>
-          <select onChange={(evt) => setSelectedWorksheet(evt.target.value)}>
-            {spreadsheetMetadata?.worksheets.map((worksheet) => (
-              <option key={worksheet} value={worksheet}>
-                {worksheet}
-              </option>
-            ))}
-          </select>
+          <Alert status="success" rounded="md">
+            <AlertIcon />
+            Metadados carregados com sucesso!
+          </Alert>
+          <Box pt="4">
+            <Box mb="2">Selecione uma subplanilha para continuar:</Box>
+            <Select onChange={(evt) => setSelectedWorksheet(evt.target.value)}>
+              {spreadsheetMetadata?.worksheets.map((worksheet) => (
+                <option key={worksheet} value={worksheet}>
+                  {worksheet}
+                </option>
+              ))}
+            </Select>
+          </Box>
         </Box>
       )}
     </Box>

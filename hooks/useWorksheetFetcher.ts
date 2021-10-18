@@ -13,19 +13,22 @@ type WorksheetFetcherState = {
   data?: WorksheetData;
 };
 
+const defaultState = {
+  spreadsheetId: "",
+  worksheet: "",
+  isLoaded: false,
+  isLoading: false,
+  isError: false,
+};
+
 export const useWorksheetFetcher = () => {
   const { accessToken } = useGoogleAuthData();
 
-  const [state, setState] = useState<WorksheetFetcherState>({
-    spreadsheetId: "",
-    worksheet: "",
-    isLoaded: false,
-    isLoading: false,
-    isError: false,
-  });
+  const [state, setState] = useState<WorksheetFetcherState>(defaultState);
 
-  const _fetchWorksheet = async (spreadsheetId: string, worksheet: string) =>
-    fetchWorksheet(spreadsheetId, worksheet, accessToken).then((data) =>
+  const _fetchWorksheet = async (spreadsheetId: string, worksheet: string) => {
+    setState({ ...state, isLoading: true, isError: false });
+    return fetchWorksheet(spreadsheetId, worksheet, accessToken).then((data) =>
       setState({
         spreadsheetId,
         worksheet,
@@ -35,9 +38,13 @@ export const useWorksheetFetcher = () => {
         data,
       })
     );
+  };
+
+  const reset = () => setState(defaultState);
 
   return {
     ...state,
     fetch: _fetchWorksheet,
+    reset,
   };
 };
