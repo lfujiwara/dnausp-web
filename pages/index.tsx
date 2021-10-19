@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 
 import { Card } from "../components/layout/elements/Card";
+import { FilterByFoundedInYearRangeWidget } from "../components/sheets/widgets/filter-by-founded-in-year-range-widget";
 import { RequireGoogleLogin } from "../components/layout/RequireGoogleLogin";
 import { SpreadsheetWorksheetSelector } from "../components/sheets/SpreadsheetSelector";
 import { useEffect } from "react";
@@ -58,7 +59,12 @@ const VisualizeWorksheet = ({
         <Alert status="error">Erro ao carregar dados</Alert>
       )}
       {worksheetFetcher.isLoaded && (
-        <div>Planilha com {worksheetFetcher.data?.rows.length} linhas</div>
+        <Text mb="2">
+          Planilha com {worksheetFetcher.data?.rows.length} linhas
+        </Text>
+      )}
+      {worksheetFetcher.isLoaded && worksheetFetcher.data && (
+        <FilterByFoundedInYearRangeWidget data={worksheetFetcher.data} />
       )}
     </Card>
   );
