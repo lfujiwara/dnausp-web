@@ -7,8 +7,12 @@ import {
   CloseButton,
   Container,
   HStack,
-  Heading,
   ScaleFade,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -17,6 +21,7 @@ import { Card } from "../components/layout/elements/Card";
 import { FilterByFoundedInYearRangeWidget } from "../components/sheets/widgets/filter-by-founded-in-year-range-widget";
 import { RequireGoogleLogin } from "../components/layout/RequireGoogleLogin";
 import { SpreadsheetWorksheetSelector } from "../components/sheets/SpreadsheetSelector";
+import { ValidatorWidget } from "../components/sheets/widgets/validator-widget";
 import { useEffect } from "react";
 import { useGoogleAuthData } from "../auth/google/google-auth.context";
 import { useSpreadsheetWorksheetSelector } from "../hooks/useSpreadsheetWorksheetSelector";
@@ -64,7 +69,20 @@ const VisualizeWorksheet = ({
         </Text>
       )}
       {worksheetFetcher.isLoaded && worksheetFetcher.data && (
-        <FilterByFoundedInYearRangeWidget data={worksheetFetcher.data} />
+        <Tabs>
+          <TabList>
+            <Tab>Validação</Tab>
+            <Tab>Extração</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel>
+              <ValidatorWidget {...worksheetFetcher.data} />
+            </TabPanel>
+            <TabPanel>
+              <FilterByFoundedInYearRangeWidget data={worksheetFetcher.data} />
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
       )}
     </Card>
   );
