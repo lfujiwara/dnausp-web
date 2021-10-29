@@ -5,6 +5,7 @@ import FuzzySet from "fuzzyset";
 import { Result } from "../../../common/result";
 import { RowValidatorEntry } from "../validator-base";
 import _institutos from "./institutos.json";
+import { validateInstituto } from "@domain/validation/instituto";
 
 const institutosSet = FuzzySet(
   _institutos.map((instituto) => `${instituto.nome} - ${instituto.sigla}`)
@@ -106,11 +107,12 @@ export const SocioValidatorEntryPrototype: (n: number) => RowValidatorEntry = (
     const errors: string[] = [];
 
     const instituto = getInstituto(n)(row);
+    const resultInstituto = validateInstituto(getInstituto(n)(row) + "");
     const email = getEmail(n)(row);
     const nusp = getNUSP(n)(row);
     const nome = getNome(n)(row);
 
-    if (instituto && !validarInstituto(instituto)) {
+    if (instituto && resultInstituto.isErr()) {
       errors.push(`Instituto inválido: ${instituto}`);
     }
 
