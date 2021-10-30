@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-markercluster";
 import L from "leaflet";
+import CompanyInfo from "../geodata/filters/CompanyInfo";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import empresas from "./resources/empresas_cidade.json";
@@ -52,12 +53,13 @@ export default class MyMap extends Component {
               return (
                 <Marker position={[emp.lat, emp.lon]} key={index}>
                   <Popup minWidth={90}>
-                    <span>{emp.municipio}</span>
+                    <CompanyInfo info={emp} />
+                    {/* <span>{emp.municipio}</span>
                     <br />
                     <span>{emp.grupo_cnae}</span>
                     <br />
                     <span>{emp.estagioDeIncubacao}</span>
-                    <br />
+                    <br /> */}
                   </Popup>
                 </Marker>
               );

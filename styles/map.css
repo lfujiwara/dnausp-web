@@ -17,3 +17,7 @@
   height: 500px;
   display: inline-block;
 }
+
+.company-info-attr-label {
+  font-weight: bold;
+}
