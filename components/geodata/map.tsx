@@ -4,7 +4,7 @@ import MarkerClusterGroup from "react-leaflet-markercluster";
 import L from "leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
-import municipios from "./resources/municipios_sp.json";
+import empresas from "./resources/empresas_cidade.json";
 
 let DefaultIcon = L.icon({
   iconUrl: icon.src,
@@ -19,22 +19,10 @@ const tileLayerUrl =
 export default class MyMap extends Component {
   state = {
     center: {
-      lat: -23.56,
-      lng: -46.72,
+      lat: -12.0,
+      lng: -50.0,
     },
-    marker: {
-      lat: 31.698956,
-      lng: 76.732407,
-    },
-    zoom: 13,
-  };
-
-  updateMarker = (e: any) => {
-    // const marker = e.marker;
-    this.setState({
-      marker: e.marker.getLatLng(),
-    });
-    console.log(e.marker.getLatLng());
+    zoom: 4,
   };
 
   render() {
@@ -42,20 +30,13 @@ export default class MyMap extends Component {
       this.state.center.lat,
       this.state.center.lng,
     ];
-    const markerPosition: [number, number] = [
-      this.state.marker.lat,
-      this.state.marker.lng,
-    ];
 
     return (
       <>
         <MapContainer
           center={position}
           zoom={this.state.zoom}
-          style={{
-            width: "50%",
-            height: "500px",
-          }}
+          className="map-panel"
         >
           <TileLayer
             attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -63,14 +44,20 @@ export default class MyMap extends Component {
             subdomains="abcd"
             maxZoom={13}
           />
-          <MarkerClusterGroup>
-            {municipios.map((mun) => {
+          <MarkerClusterGroup
+            showCoverageOnHover={false}
+            maxClusterRadius={100}
+          >
+            {empresas.map((emp, index) => {
               return (
-                <Marker position={[mun.lat, mun.lon]} key={mun.municipio}>
+                <Marker position={[emp.lat, emp.lon]} key={index}>
                   <Popup minWidth={90}>
-                    <span>{mun.municipio}</span>
+                    <span>{emp.municipio}</span>
                     <br />
-                    <span>Total de empresas: {mun.total_empresas}</span>
+                    <span>{emp.grupo_cnae}</span>
+                    <br />
+                    <span>{emp.estagioDeIncubacao}</span>
+                    <br />
                   </Popup>
                 </Marker>
               );

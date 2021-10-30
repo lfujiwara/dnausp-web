@@ -5,3 +5,15 @@
   margin-top: 2%;
   border: 1px solid red;
 }
+
+.map-panel {
+  width: 50%;
+  height: 500px;
+  display: inline-block;
+}
+
+.filters-panel {
+  width: 50%;
+  height: 500px;
+  display: inline-block;
+}

@@ -1,5 +1,8 @@
 import React from "react";
 import dynamic from "next/dynamic";
+// import Filters from "../components/geodata/filters/filters";
+import FiltersContainer from "../components/geodata/filters/FiltersContainer";
+import { Flex } from "@chakra-ui/layout";
 
 const MapWithNoSSR = dynamic(() => import("../components/geodata/map"), {
   ssr: false,
@@ -8,7 +11,11 @@ const MapWithNoSSR = dynamic(() => import("../components/geodata/map"), {
 export default function geoData() {
   return (
     <div className="map-root">
-      <MapWithNoSSR />
+      <Flex>
+        <MapWithNoSSR />
+        {/* <Filters /> */}
+        <FiltersContainer />
+      </Flex>
     </div>
   );
 }
