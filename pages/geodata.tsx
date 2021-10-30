@@ -1,12 +1,14 @@
-import Map from "../components/geodata/map";
-import { Box, Center, Text } from "@chakra-ui/react";
-export default function () {
+import React from "react";
+import dynamic from "next/dynamic";
+
+const MapWithNoSSR = dynamic(() => import("../components/geodata/map"), {
+  ssr: false,
+});
+
+export default function geoData() {
   return (
-    <div>
-      <Center>Distribuição geográfica de empresas DNA USP</Center>
-      <Center>
-        <Map />
-      </Center>
+    <div className="map-root">
+      <MapWithNoSSR />
     </div>
   );
 }
