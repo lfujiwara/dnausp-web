@@ -17,7 +17,7 @@ export const FilterByFoundedInYearRange: IWidget & {
     maxYear: number,
     yearColIndex: number
   ): IWidgetReturnValue => {
-    const getYear = (row: string[]) => Number(row[yearColIndex]);
+    const getYear = (row: string[]) => parseInt(row[yearColIndex], 10);
 
     const result: IWidgetReturnValue = {
       matched: [],

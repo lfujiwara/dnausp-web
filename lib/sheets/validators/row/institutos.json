@@ -1,0 +1,86 @@
+[
+  { "sigla": "EACH", "nome": "Escola de Artes, Ciências e Humanidades " },
+  { "sigla": "ECA", "nome": "Escola de Comunicações e Artes " },
+  { "sigla": "EEFE", "nome": "Escola de Educação Física e Esporte " },
+  { "sigla": "EE", "nome": "Escola de Enfermagem " },
+  { "sigla": "Poli", "nome": "Escola Politécnica " },
+  { "sigla": "FAU", "nome": "Faculdade de Arquitetura e Urbanismo " },
+  { "sigla": "FCF", "nome": "Faculdade de Ciências Farmacêuticas " },
+  { "sigla": "FD", "nome": "Faculdade de Direito " },
+  {
+    "sigla": "FEA",
+    "nome": "Faculdade de Economia, Administração e Contabilidade "
+  },
+  { "sigla": "FE", "nome": "Faculdade de Educação " },
+  {
+    "sigla": "FFLCH",
+    "nome": "Faculdade de Filosofia, Letras e Ciências Humanas "
+  },
+  { "sigla": "FM", "nome": "Faculdade de Medicina " },
+  { "sigla": "FMVZ", "nome": "Faculdade de Medicina Veterinária e Zootecnia " },
+  { "sigla": "FO", "nome": "Faculdade de Odontologia " },
+  { "sigla": "FSP", "nome": "Faculdade de Saúde Pública " },
+  {
+    "sigla": "IAG",
+    "nome": "Instituto de Astronomia, Geofísica e Ciências Atmosféricas "
+  },
+  { "sigla": "IB", "nome": "Instituto de Biociências " },
+  { "sigla": "ICB", "nome": "Instituto de Ciências Biomédicas " },
+  { "sigla": "IEE", "nome": "Instituto de Energia e Ambiente " },
+  { "sigla": "IEA", "nome": "Instituto de Estudos Avançados " },
+  { "sigla": "IEB", "nome": "Instituto de Estudos Brasileiros " },
+  { "sigla": "IF", "nome": "Instituto de Física " },
+  { "sigla": "IGc", "nome": "Instituto de Geociências " },
+  { "sigla": "IME", "nome": "Instituto de Matemática e Estatística " },
+  { "sigla": "IMT", "nome": "Instituto de Medicina Tropical de São Paulo " },
+  { "sigla": "IP", "nome": "Instituto de Psicologia " },
+  { "sigla": "IQ", "nome": "Instituto de Química " },
+  { "sigla": "IRI", "nome": "Instituto de Relações Internacionais " },
+  { "sigla": "IO", "nome": "Instituto Oceanográfico " },
+  { "sigla": "MAE", "nome": "Museu de Arqueologia e Etnografia" },
+  { "sigla": "MAC", "nome": "Museu de Arte Contemporânea" },
+  { "sigla": "MP", "nome": "Museu Paulista" },
+  { "sigla": "MZ", "nome": "Museu de Zoologia" },
+  { "sigla": "FOB", "nome": "Faculdade de Odontologia de Bauru " },
+  {
+    "sigla": "Centrinho",
+    "nome": "Hospital de Reabilitação de Anomalias Craniofaciais "
+  },
+  { "sigla": "EEL", "nome": "Escola de Engenharia de Lorena " },
+  { "sigla": "CENA", "nome": "Centro de Energia Nuclear na Agricultura " },
+  { "sigla": "", "nome": "Escola Superior de Agricultura “Luiz de Queiroz”" },
+  {
+    "sigla": "FZEA",
+    "nome": "Faculdade de Zootecnia e Engenharia de Alimentos "
+  },
+  {
+    "sigla": "EEFERP",
+    "nome": "Escola de Educação Física e Esporte de Ribeirão Preto "
+  },
+  { "sigla": "EERP", "nome": "Escola de Enfermagem de Ribeirão Preto " },
+  {
+    "sigla": "FCFRP",
+    "nome": "Faculdade de Ciências Farmacêuticas de Ribeirão Preto "
+  },
+  { "sigla": "FDRP", "nome": "Faculdade de Direito de Ribeirão Preto " },
+  {
+    "sigla": "FEARP",
+    "nome": "Faculdade de Economia, Administração e Contabilidade de Ribeirão Preto "
+  },
+  {
+    "sigla": "FFCLRP",
+    "nome": "Faculdade de Filosofia, Ciências e Letras de Ribeirão Preto "
+  },
+  { "sigla": "FMRP", "nome": "Faculdade de Medicina de Ribeirão Preto " },
+  { "sigla": "FORP", "nome": "Faculdade de Odontologia de Ribeirão Preto " },
+  { "sigla": "PMI", "nome": "Departamento de Engenharia de Minas e Petróleo " },
+  { "sigla": "EESC", "nome": "Escola de Engenharia de São Carlos " },
+  { "sigla": "IAU", "nome": "Instituto de Arquitetura e Urbanismo " },
+  {
+    "sigla": "ICMC",
+    "nome": "Instituto de Ciências Matemáticas e de Computação "
+  },
+  { "sigla": "IFSC", "nome": "Instituto de Física de São Carlos " },
+  { "sigla": "IQSC", "nome": "Instituto de Química de São Carlos " },
+  { "sigla": "CEBIMar", "nome": "Centro de Biologia Marinha " }
+]
