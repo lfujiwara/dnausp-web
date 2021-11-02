@@ -16,6 +16,7 @@ export default function CompanyInfo(props: any) {
         value={props.info.estagioDeIncubacao}
       />
       <Info label="Munícipio" value={props.info.municipio} />
+      <Info label="Status" value={props.info.status} />
     </>
   );
 }

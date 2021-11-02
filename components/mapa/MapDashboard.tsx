@@ -11,7 +11,7 @@ const MapWithNoSSR = dynamic(() => import("./Map"), {
 const filtersDefaultValue = {
   incubated: true,
   graduated: true,
-  neverIncubated: true,
+  nonIncubated: true,
   active: true,
 } as MapFilter;
 
@@ -22,7 +22,7 @@ export default function MapDashboard(props: any) {
     const filters = {
       incubated: e[0],
       graduated: e[1],
-      neverIncubated: e[2],
+      nonIncubated: e[2],
       active: e[3],
     };
     setMapFilters(filters);

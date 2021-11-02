@@ -10,7 +10,7 @@ import IndeterminateSelector from "./IndeterminateSelector";
 
 const options = {
   parent: "Todas as empresas",
-  subgroup: ["Incubadas", "Graduadas", "Direto ao mercado", "Ativas"],
+  subgroup: ["Incubadas", "Graduadas", "Direto para o mercado", "Ativas"],
 };
 export default function FilterSelector(props: any) {
   return (
