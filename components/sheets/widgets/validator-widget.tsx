@@ -31,7 +31,6 @@ export const useValidatorWidget = () => {
     const rows = sheet.rows.map((row) =>
       row.reduce((a, b, i) => ({ ...a, [sheet.header[i]]: b }), {})
     );
-    console.log(rows);
     return validate(rows);
   };
 

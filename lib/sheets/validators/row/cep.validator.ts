@@ -5,25 +5,25 @@ import ranges from "./zipcode_ranges.json";
 
 function validarAreaCep(cep: string, uf: string): boolean {
   let uf_ranges = ranges.filter((range) => range.uf === uf);
-  uf_ranges.forEach((range) => {
+  for (const range of uf_ranges) {
     let cepAsNumber = parseInt(cep);
-    let max = parseInt(range.max);
-    let min = parseInt(range.min);
+    let max = parseInt(range.max.replace("-", ""));
+    let min = parseInt(range.min.replace("-", ""));
     if (cepAsNumber >= min && cepAsNumber <= max) return true;
-  });
+  }
+
   return false;
 }
 
 const cepValido = (cep: string, estado: string): boolean => {
   cep = cep.replace(/[^0-9]/g, "");
   let uf = "";
-  // console.log({ cep, estado });
   if (cep.length != 8) return false;
 
-  let uf_match = estado.match(/\((.*)\)/);
-  if (uf_match != null) uf = uf_match[0];
-
+  let uf_match = estado.match(/\(([^)]+)\)/);
+  if (uf_match != null) uf = uf_match[1];
   if (uf.length != 2) return false;
+
   return validarAreaCep(cep, uf);
 };
 
