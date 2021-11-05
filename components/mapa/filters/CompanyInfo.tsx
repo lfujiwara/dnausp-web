@@ -1,6 +1,6 @@
 import { Text } from "@chakra-ui/react";
 
-function Info(props) {
+function Info(props: any) {
   return (
     <Text>
       {props.label}: {props.value}

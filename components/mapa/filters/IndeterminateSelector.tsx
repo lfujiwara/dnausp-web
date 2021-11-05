@@ -1,7 +1,7 @@
 import { Checkbox, CheckboxGroup, Stack } from "@chakra-ui/react";
 import React from "react";
 
-export default function IndeterminateSelector({ parent, subgroup, updateFn }) {
+export default function IndeterminateSelector(props: any) {
   const [companyFilters, setCompanyFilters] = React.useState(
     new Array(4).fill(true)
   );
@@ -11,7 +11,7 @@ export default function IndeterminateSelector({ parent, subgroup, updateFn }) {
 
   function handleStateUpdate(newState: boolean[]) {
     setCompanyFilters(newState);
-    updateFn(newState);
+    props.updateFn(newState);
   }
 
   return (
@@ -20,13 +20,15 @@ export default function IndeterminateSelector({ parent, subgroup, updateFn }) {
         isChecked={allChecked}
         isIndeterminate={isIndeterminate}
         onChange={(e) => {
-          handleStateUpdate(new Array(subgroup.length).fill(e.target.checked));
+          handleStateUpdate(
+            new Array(props.subgroup.length).fill(e.target.checked)
+          );
         }}
       >
-        {parent}
+        {props.parent}
       </Checkbox>
       <Stack pl={6} mt={1} spacing={1}>
-        {subgroup.map((label: any, index: any) => {
+        {props.subgroup.map((label: any, index: any) => {
           return (
             <Checkbox
               key={index}
