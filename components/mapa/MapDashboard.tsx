@@ -15,7 +15,7 @@ const filtersDefaultValue = {
   active: true,
 } as MapFilter;
 
-export default function MapDashboard(props: any) {
+export default function MapDashboard() {
   const [mapFilters, setMapFilters] = useState(filtersDefaultValue);
 
   function updateMapFilters(e: any) {
