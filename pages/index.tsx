@@ -16,14 +16,13 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-
-import { Card } from "../components/layout/elements/Card";
-import { FilterByFoundedInYearRangeWidget } from "../components/sheets/widgets/filter-by-founded-in-year-range-widget";
-import { RequireGoogleLogin } from "../components/layout/RequireGoogleLogin";
-import { SpreadsheetWorksheetSelector } from "../components/sheets/SpreadsheetSelector";
-import { ValidatorWidget } from "../components/sheets/widgets/validator-widget";
 import { useEffect } from "react";
 import { useGoogleAuthData } from "../auth/google/google-auth.context";
+import { Card } from "../components/layout/elements/Card";
+import { RequireGoogleLogin } from "../components/layout/RequireGoogleLogin";
+import { SpreadsheetWorksheetSelector } from "../components/sheets/SpreadsheetSelector";
+import { FilterByFoundedInYearRangeWidget } from "../components/sheets/widgets/filter-by-founded-in-year-range-widget";
+import { ValidatorWidget } from "../components/sheets/widgets/validator-widget";
 import { useSpreadsheetWorksheetSelector } from "../hooks/useSpreadsheetWorksheetSelector";
 import { useWorksheetFetcher } from "../hooks/useWorksheetFetcher";
 

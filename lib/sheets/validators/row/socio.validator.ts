@@ -105,7 +105,7 @@ export const SocioValidatorEntryPrototype: (n: number) => RowValidatorEntry = (
     const resultInstituto = validateInstituto(getInstituto(n)(row) + "");
     const email = getEmail(n)(row);
     const nusp = getNUSP(n)(row);
-    const resultNome = validateNome(getNome(n)(row) + "");
+    const resultNome = validateNome(getNome(n)(row) + "", true);
 
     if (resultInstituto.isErr()) {
       errors.push(`Instituto inválido: ${resultInstituto.value}`);
@@ -134,4 +134,4 @@ export const SocioValidatorEntryPrototype: (n: number) => RowValidatorEntry = (
 export const SocioValidatorEntries = Array(5)
   .fill(0)
   .map((_, i) => i)
-  .map((i) => SocioValidatorEntryPrototype(i));
+  .map((i) => SocioValidatorEntryPrototype(i + 1));

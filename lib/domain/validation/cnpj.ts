@@ -30,7 +30,7 @@ export const validateCNPJ = (cnpj: string): TResult<string, string[]> => {
   const _cnpj = cnpj.replace(/[^\d]+/g, "");
   const errors: string[] = [];
 
-  if (!validateCNPJ(_cnpj)) errors.push("CNPJ inválido");
+  if (!_validateCNPJ(_cnpj)) errors.push("CNPJ inválido");
 
   if (errors.length > 0) return Result.err(errors);
   return Result.ok(_cnpj);
