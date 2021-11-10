@@ -1,0 +1,23 @@
+.map-root {
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2%;
+  border: 1px solid #ccc;
+}
+
+.map-panel {
+  width: 50%;
+  height: 500px;
+  display: inline-block;
+}
+
+.filters-panel {
+  width: 50%;
+  height: 500px;
+  display: inline-block;
+}
+
+.company-info-attr-label {
+  font-weight: bold;
+}
