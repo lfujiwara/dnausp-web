@@ -1,12 +1,18 @@
 import { Button } from "@chakra-ui/button";
+import Icon from "@chakra-ui/icon";
 import { Box, HStack } from "@chakra-ui/layout";
+import { useToast } from "@chakra-ui/toast";
 import { ReportedValue } from "@common/report";
 import { TResult } from "@common/result";
 import { IEmpresa } from "@domain/entities/empresa";
 import { DefaultWorksheet } from "@sheets/defaults/default-worksheet";
+import { downloadTextAsCSVFile } from "@sheets/download-text-to-csv";
 import { empresaMapper } from "@sheets/mappers/empresa-mapper";
 import { DownloadCSVFromObjectArray } from "components/misc/DownloadCSVFromObjectArray";
+import { useUpsertEmpresa } from "hooks/useUpsertEmpresa";
+import { unparse } from "papaparse";
 import { FC, useState } from "react";
+import { FaCloud, FaFileDownload } from "react-icons/fa";
 
 const InnerCard = ({
   label,
@@ -17,6 +23,31 @@ const InnerCard = ({
   quantity: number;
   data: any[];
 }) => {
+  const api = useUpsertEmpresa();
+  const toast = useToast();
+  const send = () => {
+    api(data)
+      .then((res) => {
+        const count = res?.ok?.length;
+        if (count)
+          toast({
+            title: `${count} empresas adicionadas/atualizadas`,
+            status: "success",
+          });
+        else
+          toast({
+            title: `Algo estranho aconteceu.`,
+            status: "warning",
+          });
+      })
+      .catch(() => {
+        toast({
+          title: `Ocorreu um erro.`,
+          status: "error",
+        });
+      });
+  };
+
   return (
     <Box w="32" rounded="md" p="2" shadow="md">
       <Box fontWeight="bold" textAlign="left">
@@ -25,7 +56,19 @@ const InnerCard = ({
       <Box fontWeight="semibold" textAlign="right">
         {quantity}
       </Box>
-      <DownloadCSVFromObjectArray arr={data} w="full" />
+      <Button
+        variantColor="green"
+        w="full"
+        mt="2"
+        onClick={() => downloadTextAsCSVFile(unparse(data, { header: true }))}
+      >
+        <Icon as={FaFileDownload} mr="2" /> Baixar
+      </Button>
+      {label === "Mapeadas" && (
+        <Button variantColor="green" w="full" mt="2" onClick={send}>
+          <Icon as={FaCloud} mr="2" /> Enviar
+        </Button>
+      )}
     </Box>
   );
 };
@@ -65,7 +108,7 @@ export const LoadSheetDataAsDomain: FC<{ inputs: DefaultWorksheet[] }> = ({
   return (
     <Box>
       <Button onClick={execute}>Executar validação</Button>
-      <HStack spacing="4" pt="4">
+      <HStack spacing="4" pt="4" align="stretch">
         <InnerCard data={ok} label="Mapeadas" quantity={okCount} />
         <InnerCard data={err} label="Erros" quantity={errCount} />
       </HStack>

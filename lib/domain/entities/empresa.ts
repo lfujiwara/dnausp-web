@@ -2,6 +2,7 @@ import { IEndereco } from "./endereco";
 
 export interface IEmpresa {
   cnpj?: string;
+  idEstrangeira?: number;
   estrangeira: boolean;
   nomeFantasia: string;
   razaoSocial: string;

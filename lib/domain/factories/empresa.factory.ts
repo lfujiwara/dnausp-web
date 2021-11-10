@@ -6,16 +6,7 @@ import { validateNome } from "@domain/validation/nome";
 import { validateSituacaoReceita } from "@domain/validation/situacao-receita";
 
 export namespace EmpresaFactory {
-  export interface Input {
-    cnpj?: string;
-    estrangeira: boolean;
-    razaoSocial: string;
-    nomeFantasia: string;
-    anoDeFundacao: number;
-    cnae?: string;
-    tipoSocietario?: string;
-    situacaoReceita?: string;
-  }
+  export type Input = IEmpresa;
 }
 
 export class EmpresaFactory {
@@ -40,6 +31,12 @@ export class EmpresaFactory {
       empresa.cnpj = resultCNPJ.isOk() ? resultCNPJ.value : undefined;
     else if (resultCNPJ.isErr()) errors.push(...resultCNPJ.value);
     else errors.push("CNPJ válido, mas empresa foi apontada como estrangeira");
+
+    // Empresa estrangeira precisa ter um idEstrangeira (para podermos identificá-la, dado que não há CNPJ)
+    if (empresa.estrangeira && isNaN(Number(input.idEstrangeira)))
+      errors.push("Empresa estrangeira precisa ter um idEstrangeira");
+    else if (empresa.estrangeira)
+      empresa.idEstrangeira = Number(input.idEstrangeira);
 
     // Razão social e nome fantasia não vazios
     const resultRazaoSocial = validateNome(input.razaoSocial + "");
