@@ -3,7 +3,10 @@ import { downloadTextAsCSVFile } from "@sheets/download-text-to-csv";
 import { FC, JSXElementConstructor, ReactElement } from "react";
 import { FaFileDownload } from "react-icons/fa";
 
-export type DownloadCSVProps = Omit<IconButtonProps, "onClick"> & {
+export type DownloadCSVProps = Omit<
+  IconButtonProps,
+  "onClick" | "aria-label"
+> & {
   csvData?: string;
   icon?: ReactElement<any, string | JSXElementConstructor<any>> | undefined;
   "aria-label"?: string;
