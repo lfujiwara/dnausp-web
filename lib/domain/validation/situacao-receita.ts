@@ -13,7 +13,7 @@ export const validateSituacaoReceita = (
   let situacao = getValue(situacaoReceita);
 
   if (situacao) return Result.ok(situacaoReceita);
-  else errors.push(`Situacao receita inválida: ${situacaoReceita}`);
+  else errors.push(`Situacao receita inválida: "${situacaoReceita}"`);
 
   return Result.err(errors);
 };

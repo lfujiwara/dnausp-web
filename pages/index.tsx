@@ -2,90 +2,17 @@ import {
   Alert,
   AlertIcon,
   AlertTitle,
-  Box,
-  Button,
   CloseButton,
   Container,
-  HStack,
   ScaleFade,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { VisualizeWorksheet } from "components/sheets/VisualizeWorksheet";
+import React from "react";
 import { useGoogleAuthData } from "../auth/google/google-auth.context";
-import { Card } from "../components/layout/elements/Card";
 import { RequireGoogleLogin } from "../components/layout/RequireGoogleLogin";
 import { SpreadsheetWorksheetSelector } from "../components/sheets/SpreadsheetSelector";
-import { FilterByFoundedInYearRangeWidget } from "../components/sheets/widgets/filter-by-founded-in-year-range-widget";
-import { ValidatorWidget } from "../components/sheets/widgets/validator-widget";
 import { useSpreadsheetWorksheetSelector } from "../hooks/useSpreadsheetWorksheetSelector";
-import { useWorksheetFetcher } from "../hooks/useWorksheetFetcher";
-
-const VisualizeWorksheet = ({
-  spreadsheetId,
-  worksheet,
-}: {
-  spreadsheetId: string;
-  worksheet: string;
-}) => {
-  const worksheetFetcher = useWorksheetFetcher();
-
-  useEffect(() => {
-    worksheetFetcher.reset();
-  }, [spreadsheetId, worksheet]);
-
-  const fetchData = () => worksheetFetcher.fetch(spreadsheetId, worksheet);
-
-  return (
-    <Card>
-      <HStack alignItems="stretch">
-        <Box flex="1">
-          <Text fontSize="lg" fontWeight="medium">
-            {worksheet}
-          </Text>
-          <Text>{spreadsheetId}</Text>
-        </Box>
-        <Button
-          onClick={fetchData}
-          isLoading={worksheetFetcher.isLoading}
-          colorScheme="blue"
-          height="unset"
-        >
-          Carregar dados
-        </Button>
-      </HStack>
-      {worksheetFetcher.isError && (
-        <Alert status="error">Erro ao carregar dados</Alert>
-      )}
-      {worksheetFetcher.isLoaded && (
-        <Text mb="2">
-          Planilha com {worksheetFetcher.data?.rows.length} linhas
-        </Text>
-      )}
-      {worksheetFetcher.isLoaded && worksheetFetcher.data && (
-        <Tabs>
-          <TabList>
-            <Tab>Validação</Tab>
-            <Tab>Extração</Tab>
-          </TabList>
-          <TabPanels>
-            <TabPanel>
-              <ValidatorWidget {...worksheetFetcher.data} />
-            </TabPanel>
-            <TabPanel>
-              <FilterByFoundedInYearRangeWidget data={worksheetFetcher.data} />
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-      )}
-    </Card>
-  );
-};
 
 const Logado = () => {
   const spreadsheetWorksheetSelector = useSpreadsheetWorksheetSelector();
@@ -95,10 +22,12 @@ const Logado = () => {
     <div>
       <SpreadsheetWorksheetSelector {...spreadsheetWorksheetSelector} />
       {isLoaded && spreadsheetId && selectedWorksheet && (
-        <VisualizeWorksheet
-          spreadsheetId={spreadsheetId}
-          worksheet={selectedWorksheet}
-        />
+        <>
+          <VisualizeWorksheet
+            spreadsheetId={spreadsheetId}
+            worksheet={selectedWorksheet}
+          />
+        </>
       )}
     </div>
   );
