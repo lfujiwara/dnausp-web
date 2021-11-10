@@ -26,6 +26,7 @@ import { useEffect } from "react";
 import { useGoogleAuthData } from "../auth/google/google-auth.context";
 import { useSpreadsheetWorksheetSelector } from "../hooks/useSpreadsheetWorksheetSelector";
 import { useWorksheetFetcher } from "../hooks/useWorksheetFetcher";
+import StandardizeWorksheetColumns from "../components/sheets/widgets/standardize-worksheet-column-widget";
 
 const VisualizeWorksheet = ({
   spreadsheetId,
@@ -73,6 +74,7 @@ const VisualizeWorksheet = ({
           <TabList>
             <Tab>Validação</Tab>
             <Tab>Extração</Tab>
+            <Tab>Padronização</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
@@ -80,6 +82,9 @@ const VisualizeWorksheet = ({
             </TabPanel>
             <TabPanel>
               <FilterByFoundedInYearRangeWidget data={worksheetFetcher.data} />
+            </TabPanel>
+            <TabPanel>
+              <StandardizeWorksheetColumns data={worksheetFetcher.data} />
             </TabPanel>
           </TabPanels>
         </Tabs>
