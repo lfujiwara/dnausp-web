@@ -1,5 +1,5 @@
 import { Result, TResult } from "@common/result";
-import cnaeData from "./cnae.json";
+import cnaeData from "@json-assets/cnae.json";
 
 const subclasses = cnaeData.subclasses;
 const list = new Set(Object.keys(subclasses));

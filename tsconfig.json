@@ -19,7 +19,8 @@
     "paths": {
       "@common/*": ["lib/common/*"],
       "@domain/*": ["lib/domain/*"],
-      "@sheets/*": ["lib/sheets/*"]
+      "@sheets/*": ["lib/sheets/*"],
+      "@json-assets/*": ["json/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

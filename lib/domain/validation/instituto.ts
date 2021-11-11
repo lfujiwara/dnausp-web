@@ -1,6 +1,6 @@
 import FuzzySet from "fuzzyset";
 import { Result } from "@common/result";
-import _institutos from "./institutos.json";
+import _institutos from "@json-assets/institutos.json";
 
 const institutosSet = FuzzySet(
   _institutos.map((instituto) => `${instituto.nome} - ${instituto.sigla}`)
