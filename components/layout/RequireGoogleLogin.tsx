@@ -1,15 +1,21 @@
-import { Box, Center, Text, VStack } from "@chakra-ui/layout";
-import { Button, IconButton } from "@chakra-ui/button";
+import {Center, Text, VStack} from "@chakra-ui/layout";
+import {Button} from "@chakra-ui/button";
+import {signIn, useSession} from "next-auth/react";
 
-import { FaGoogle } from "react-icons/fa";
+import {FaGoogle} from "react-icons/fa";
 import Icon from "@chakra-ui/icon";
-import { useGoogleAuthManager } from "../../auth/google/google-auth.context";
+import {useEffect} from "react";
 
-export const RequireGoogleLogin: React.FC<any> = ({ children }) => {
-  const { isSignedIn, isAuthLoaded, isError, isLoading, signIn, signOut } =
-    useGoogleAuthManager();
+export const RequireGoogleLogin: React.FC<any> = ({children}) => {
+  const sess = useSession();
 
-  if (!isSignedIn) {
+  useEffect(() => {
+    if (sess.data?.error === "RefreshAccessTokenError") {
+      signIn(); // Force sign in to hopefully resolve error
+    }
+  }, [sess]);
+
+  if (!sess.data) {
     return (
       <Center p="4">
         <VStack align="center" spacing="2">
@@ -17,8 +23,8 @@ export const RequireGoogleLogin: React.FC<any> = ({ children }) => {
             É preciso estar logado com sua conta Google para acessar esse
             conteúdo.
           </Text>
-          <Button onClick={signIn} isLoading={isLoading} colorScheme="blue">
-            <Icon as={FaGoogle} mr="4" />
+          <Button onClick={() => signIn()} colorScheme="blue">
+            <Icon as={FaGoogle} mr="4"/>
             Entrar
           </Button>
         </VStack>

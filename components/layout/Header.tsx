@@ -1,27 +1,26 @@
 import { Box, Container, HStack } from "@chakra-ui/layout";
-import { Flex, Heading } from "@chakra-ui/react";
-
-import { GoogleLoginOrLogout } from "../auth/GoogleLoginOrLogout";
+import { Heading } from "@chakra-ui/react";
 import Image from "next/image";
-import { useGoogleAuthManager } from "../../auth/google/google-auth.context";
+import { useAuth } from "../../hooks/useAuth";
+import { signIn, signOut } from "next-auth/react";
+import { GoogleLoginOrLogout } from "../auth/GoogleLoginOrLogout";
 
 export const Header = () => {
-  const gAuthManager = useGoogleAuthManager();
-
+  const { isLoading, isAuthenticated } = useAuth();
   return (
     <Box borderBottomWidth="thin" borderBottomColor="gray.100">
       <Container maxW="container.lg">
         <HStack align="center">
-          <Image src="/dnausp.svg" width="64" height="64" />
+          <Image alt="dnausp" src="/dnausp.svg" width="64" height="64" />
           <Heading color="gray.700" fontWeight="medium">
             Painel
           </Heading>
           <Box flex="1" />
           <GoogleLoginOrLogout
-            isLoading={gAuthManager.isLoading}
-            isSignedIn={gAuthManager.isSignedIn}
-            onSignIn={gAuthManager.signIn}
-            onSignOut={gAuthManager.signOut}
+            isLoading={isLoading}
+            isSignedIn={isAuthenticated}
+            onSignIn={signIn}
+            onSignOut={signOut}
           />
         </HStack>
       </Container>
