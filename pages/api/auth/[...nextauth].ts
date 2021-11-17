@@ -1,3 +1,4 @@
+import "@auth/fix-next-auth-url";
 import NextAuth, { Session, User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import {
