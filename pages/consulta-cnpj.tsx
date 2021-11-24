@@ -1,4 +1,4 @@
-import {Center, FormControl, FormLabel} from "@chakra-ui/react";
+import {Center, FormControl, FormErrorMessage, FormLabel} from "@chakra-ui/react";
 import {Box, HStack, Text} from "@chakra-ui/layout";
 import {Input} from "@chakra-ui/input";
 import {EventHandler, useRef, useState} from "react";
@@ -37,7 +37,7 @@ const RenderValue = ({label, value, level = 0}: {
 
 export default function () {
   const ref = useRef<HTMLInputElement>(null);
-  const [isError, setIsError] = useState(false);
+  const [isError, setIsError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<any>();
 
@@ -48,11 +48,12 @@ export default function () {
       fetch(`https://brasilapi.com.br/api/cnpj/v1/${actualCNPJ}`).then(res => res.json()).then(res => {
         setIsLoading(false)
         setData(res)
+        setIsError('')
       }).catch(err => {
         setIsLoading(false)
-        setIsError(true)
+        setIsError('servidor')
       })
-    } else setIsError(true);
+    } else setIsError('cnpj')
 
     evt.preventDefault();
   };
@@ -61,13 +62,16 @@ export default function () {
     <Box p="4" w="full" maxW="container.sm">
       <Text fontSize="xl" fontWeight="bold">Consulta CNPJ</Text>
       <form onSubmit={handleSubmit}>
-        <FormControl id="cnpj">
+        <FormControl id="cnpj" isInvalid={!!isError}>
           <FormLabel>CNPJ</FormLabel>
-          <Input type="TEXT" ref={ref}/>
-          <Button mt="2" colorScheme="blue" w="full" type="submit">Pesquisar</Button>
+          <Input isInvalid={!!isError} type="text" ref={ref}/>
+          {isError.toLowerCase() === 'cnpj' && <FormErrorMessage>CNPJ inválido</FormErrorMessage>}
+          {isError.toLowerCase() === 'servidor' &&
+          <FormErrorMessage>Erro ao consultar servidor</FormErrorMessage>}
+          <Button mt="2" colorScheme="blue" w="full" type="submit" isLoading={isLoading}> Pesquisar</Button>
         </FormControl>
       </form>
-      {data &&
+      {data && !isError &&
       <Box my="2">
         {Object.entries(data).map(([key, value]) => (
           <RenderValue key={key} label={key} value={value}/>
@@ -75,7 +79,8 @@ export default function () {
       </Box>
       }
     </Box>
-  </Center>;
+  </Center>
+
 }
 
 const validateCNPJ = (cnpj: string) => {
