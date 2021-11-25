@@ -8,7 +8,6 @@ import { IEmpresa } from "@domain/entities/empresa";
 import { DefaultWorksheet } from "@sheets/defaults/default-worksheet";
 import { downloadTextAsCSVFile } from "@sheets/download-text-to-csv";
 import { empresaMapper } from "@sheets/mappers/empresa-mapper";
-import { DownloadCSVFromObjectArray } from "components/misc/DownloadCSVFromObjectArray";
 import { useUpsertEmpresa } from "hooks/useUpsertEmpresa";
 import { unparse } from "papaparse";
 import { FC, useState } from "react";
@@ -57,7 +56,7 @@ const InnerCard = ({
         {quantity}
       </Box>
       <Button
-        variantColor="green"
+        colorScheme="green"
         w="full"
         mt="2"
         onClick={() => downloadTextAsCSVFile(unparse(data, { header: true }))}
@@ -65,7 +64,7 @@ const InnerCard = ({
         <Icon as={FaFileDownload} mr="2" /> Baixar
       </Button>
       {label === "Mapeadas" && (
-        <Button variantColor="green" w="full" mt="2" onClick={send}>
+        <Button colorScheme="green" w="full" mt="2" onClick={send}>
           <Icon as={FaCloud} mr="2" /> Enviar
         </Button>
       )}

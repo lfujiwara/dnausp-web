@@ -10,10 +10,11 @@
     "format": "prettier --write {auth,backend,components,constants,hooks,json,lib,pages}/*"
   },
   "dependencies": {
-    "12": "^1.0.2",
     "@chakra-ui/react": "^1.6.9",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "@nivo/core": "^0.74.0",
+    "@nivo/pie": "^0.74.0",
     "@prisma/client": "^3.4.1",
     "framer-motion": "^4",
     "fuzzyset": "^1.0.6",
@@ -31,6 +32,7 @@
   "devDependencies": {
     "@types/fuzzyset": "^1.0.3",
     "@types/papaparse": "^5.3.0",
+    "@types/pg": "^8.6.1",
     "@types/react": "17.0.29",
     "eslint": "^7.32.0",
     "eslint-config-next": "11.1.2",

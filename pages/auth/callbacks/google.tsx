@@ -17,7 +17,7 @@ export default function Google() {
   const m = useBackendAuthManager();
   const [error, setError] = React.useState<string | null>(null);
 
-  const handleIsAuthenticated = () => router.push("/");
+  const handleIsAuthenticated = () => router.push("/app");
 
   useEffect(() => {
     const token = router.query.token?.toString();

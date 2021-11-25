@@ -10,3 +10,11 @@ export const RequireBackendAuth: FC = ({ children }) => {
 
   return <>{children}</>;
 };
+
+export const WrapRequireBackendAuth: (component: FC) => FC =  // eslint-disable-next-line react/display-name
+  (Component) => (props) =>
+    (
+      <RequireBackendAuth>
+        <Component {...props} />
+      </RequireBackendAuth>
+    );
