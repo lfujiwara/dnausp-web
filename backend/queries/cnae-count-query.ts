@@ -12,8 +12,7 @@ export interface ICnaeCountQuery {
 }
 
 export class CnaeCountQuery implements ICnaeCountQuery {
-  constructor(private readonly pg: Client) {
-  }
+  constructor(private readonly pg: Client) {}
 
   async execute(
     params: CnaeCountQueryParams

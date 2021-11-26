@@ -33,7 +33,7 @@ const groupLabels2 = Object.values(cnae.secoes).reduce((acc, curr) => {
 }, {} as { [key: string]: string });
 
 function DashboardPage() {
-  const auth = useBackendAuthManager()
+  const auth = useBackendAuthManager();
 
   const [queryData, setQueryData] = useState({
     data: [],
@@ -41,7 +41,7 @@ function DashboardPage() {
   });
   const [filter, setFilter] = useState<any>({});
   const onApply = (newFilter: any) => {
-    setFilter({...filter, ...newFilter});
+    setFilter({ ...filter, ...newFilter });
   };
 
   const [groupMethod, setGroupMethod] = useState(groupingMethods[0]);
@@ -55,11 +55,11 @@ function DashboardPage() {
     fetch(`http://localhost:3333/empresas/cnae/stats?${params.toString()}`, {
       headers: {
         authorization: `Bearer ${auth.token}`,
-      }
+      },
     })
       .then((res) => res.json())
       .then((_data) =>
-        setQueryData({...queryData, data: _data, isLoading: false})
+        setQueryData({ ...queryData, data: _data, isLoading: false })
       );
   }, [filter]);
 
@@ -69,7 +69,7 @@ function DashboardPage() {
         onChange={(evt) =>
           setGroupMethod(
             groupingMethods.find((g) => g.label === evt.target.value) ||
-            groupingMethods[0]
+              groupingMethods[0]
           )
         }
         value={groupMethod.label}
@@ -85,7 +85,7 @@ function DashboardPage() {
         groupByFunction={groupMethod.fn}
         groupLabels={groupMethod.labels}
       />
-      <FilterAggregate boxProps={{p: "4"}} onApply={onApply}/>
+      <FilterAggregate boxProps={{ p: "4" }} onApply={onApply} />
     </Box>
   );
 }

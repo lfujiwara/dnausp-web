@@ -1,12 +1,12 @@
-import {Center, Text, VStack} from "@chakra-ui/layout";
-import {Button} from "@chakra-ui/button";
-import {signIn, useSession} from "next-auth/react";
+import { Center, Text, VStack } from "@chakra-ui/layout";
+import { Button } from "@chakra-ui/button";
+import { signIn, useSession } from "next-auth/react";
 
-import {FaGoogle} from "react-icons/fa";
+import { FaGoogle } from "react-icons/fa";
 import Icon from "@chakra-ui/icon";
-import {useEffect} from "react";
+import { useEffect } from "react";
 
-export const RequireGoogleLogin: React.FC<any> = ({children}) => {
+export const RequireGoogleLogin: React.FC<any> = ({ children }) => {
   const sess = useSession();
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export const RequireGoogleLogin: React.FC<any> = ({children}) => {
             conteúdo.
           </Text>
           <Button onClick={() => signIn()} colorScheme="blue">
-            <Icon as={FaGoogle} mr="4"/>
+            <Icon as={FaGoogle} mr="4" />
             Entrar
           </Button>
         </VStack>
