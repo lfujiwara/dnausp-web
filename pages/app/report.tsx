@@ -1,4 +1,4 @@
-import { Box, Container } from "@chakra-ui/react";
+import { Box, Container, Heading } from "@chakra-ui/react";
 import { ChangeEvent, useState } from "react";
 import { CNAEChart } from "../../components/charts/CNAEChart";
 import { FilterAggregate } from "../../components/charts/filters/filter-aggregate";
@@ -47,6 +47,11 @@ function DashboardPage() {
 
   return (
     <Box p="2">
+      <Center maxW="100vw">
+        <Container maxW="container.md">
+          <Heading>Distribuição CNAE - Empresas DNA USP</Heading>
+        </Container>
+      </Center>
       <CNAEChart
         data={query.data || []}
         groupByFunction={(x) => groupMethod.classifier(x.cnae)}
