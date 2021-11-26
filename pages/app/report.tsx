@@ -1,91 +1,73 @@
-import cnae from "@json-assets/cnae.json";
-import { cnaeToSecao } from "@domain/util/cnae-to-secao";
-import { Box } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { Box, Container } from "@chakra-ui/react";
+import { ChangeEvent, useState } from "react";
 import { CNAEChart } from "../../components/charts/CNAEChart";
 import { FilterAggregate } from "../../components/charts/filters/filter-aggregate";
-import { Select } from "@chakra-ui/select";
 import { WrapRequireBackendAuth } from "@auth/backend/require-backend-auth";
-import { useBackendAuthManager } from "@auth/backend/use-backend-auth-manager";
+import {
+  CNAEClassifier,
+  CNAEClassifiers,
+} from "../../components/charts/classifiers/cnae-classifiers";
+import { useCNAEStatsQuery } from "../../backend/queries/CNAEStatsQuery";
+import { Center, Text, VStack } from "@chakra-ui/layout";
+import { Select } from "@chakra-ui/select";
 
-const groupingMethods = [
-  {
-    label: "Secao",
-    labels: Object.values(cnae.secoes).reduce((acc, curr) => {
-      acc[curr.id] = curr.descricao;
-      return acc;
-    }, {} as { [key: string]: string }),
-    fn: (x: any) => cnaeToSecao(x.cnae) + "",
-  },
-  {
-    label: "Divisao",
-    labels: Object.values(cnae.divisoes).reduce((acc, curr) => {
-      acc[curr.id] = curr.descricao;
-      return acc;
-    }, {} as { [key: string]: string }),
-    fn: (x: any) => x.cnae.toString().substring(0, 2),
-  },
-];
-
-const groupLabels2 = Object.values(cnae.secoes).reduce((acc, curr) => {
-  acc[curr.id] = curr.descricao;
-  return acc;
-}, {} as { [key: string]: string });
+function SelectCNAEClassifier(props: {
+  onChange: (evt: ChangeEvent<HTMLSelectElement>) => void;
+  groupMethod: {
+    name: string;
+    classifier: CNAEClassifier;
+    labels: { [p: string]: string | undefined };
+  };
+}) {
+  return (
+    <Select onChange={props.onChange} value={props.groupMethod.name} w="full">
+      {CNAEClassifiers.map((method) => (
+        <option key={method.name} value={method.name}>
+          {method.name}
+        </option>
+      ))}
+    </Select>
+  );
+}
 
 function DashboardPage() {
-  const auth = useBackendAuthManager();
-
-  const [queryData, setQueryData] = useState({
-    data: [],
-    isLoading: false,
-  });
   const [filter, setFilter] = useState<any>({});
   const onApply = (newFilter: any) => {
     setFilter({ ...filter, ...newFilter });
   };
 
-  const [groupMethod, setGroupMethod] = useState(groupingMethods[0]);
+  const [groupMethod, setGroupMethod] = useState(CNAEClassifiers[0]);
+  const handleGroupMethodChange = (evt: ChangeEvent<HTMLSelectElement>) =>
+    setGroupMethod(
+      CNAEClassifiers.find((g) => g.name === evt.target.value) ||
+        CNAEClassifiers[0]
+    );
 
-  useEffect(() => {
-    const params = new URLSearchParams();
-    Object.keys(filter).forEach((key) => {
-      params.append(key, filter[key]);
-    });
-
-    fetch(`http://localhost:3333/empresas/cnae/stats?${params.toString()}`, {
-      headers: {
-        authorization: `Bearer ${auth.token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((_data) =>
-        setQueryData({ ...queryData, data: _data, isLoading: false })
-      );
-  }, [filter]);
+  const query = useCNAEStatsQuery(filter);
 
   return (
-    <Box>
-      <Select
-        onChange={(evt) =>
-          setGroupMethod(
-            groupingMethods.find((g) => g.label === evt.target.value) ||
-              groupingMethods[0]
-          )
-        }
-        value={groupMethod.label}
-      >
-        {groupingMethods.map((method) => (
-          <option key={method.label} value={method.label}>
-            {method.label}
-          </option>
-        ))}
-      </Select>
+    <Box p="2">
       <CNAEChart
-        data={queryData.data}
-        groupByFunction={groupMethod.fn}
+        data={query.data || []}
+        groupByFunction={(x) => groupMethod.classifier(x.cnae)}
         groupLabels={groupMethod.labels}
       />
-      <FilterAggregate boxProps={{ p: "4" }} onApply={onApply} />
+      <Center maxW="100vw">
+        <Container maxW="container.md">
+          <VStack spacing="2">
+            <Box w="full">
+              <Text fontSize="xl" mb="2" fontWeight="medium">
+                Filtrar
+              </Text>
+              <SelectCNAEClassifier
+                onChange={handleGroupMethodChange}
+                groupMethod={groupMethod}
+              />
+            </Box>
+            <FilterAggregate boxProps={{ w: "full" }} onApply={onApply} />
+          </VStack>
+        </Container>
+      </Center>
     </Box>
   );
 }

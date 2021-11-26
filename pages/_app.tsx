@@ -11,17 +11,20 @@ import { Footer } from "../components/layout/Footer";
 import { Header } from "../components/layout/Header";
 import { theme } from "../styles/theme";
 import { BackendAuthProvider } from "@auth/backend/backend-auth-context";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
-      <SessionProvider session={pageProps.session}>
-        <BackendAuthProvider>
-          <Header />
-          <Component {...pageProps} />
-          <Footer />
-        </BackendAuthProvider>
-      </SessionProvider>
+      <QueryClientProvider client={new QueryClient()}>
+        <SessionProvider session={pageProps.session}>
+          <BackendAuthProvider>
+            <Header />
+            <Component {...pageProps} />
+            <Footer />
+          </BackendAuthProvider>
+        </SessionProvider>
+      </QueryClientProvider>
     </ChakraProvider>
   );
 }

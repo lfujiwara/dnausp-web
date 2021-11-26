@@ -7,6 +7,8 @@ const retrieveFromLocalStorage = () =>
   localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY);
 const storeInLocalStorage = (token: string) =>
   localStorage.setItem(LOCAL_STORAGE_TOKEN_KEY, token);
+const removeFromLocalStorage = () =>
+  localStorage.removeItem(LOCAL_STORAGE_TOKEN_KEY);
 
 const decode = (jwt: string) => {
   try {
@@ -44,6 +46,19 @@ export const useBackendAuthManager = () => {
     });
   };
 
+  const handleLogout = () => {
+    removeFromLocalStorage();
+    setState({});
+  };
+
+  const loginHandlers = {
+    google: () => {
+      const url = process.env.NEXT_PUBLIC_BACKEND_GOOGLE_AUTH_URL + "";
+      if (!url) return;
+      window.location.href = url;
+    },
+  };
+
   const tryLoadFromLocalStorage = useCallback(() => {
     setLoadState({ ...loadState, isLoading: true });
     const token = retrieveFromLocalStorage();
@@ -60,6 +75,8 @@ export const useBackendAuthManager = () => {
 
   return {
     handleJWT,
+    handleLogout,
+    loginHandlers,
     isAuthenticated,
     token: state.token,
     profile: state.profile,

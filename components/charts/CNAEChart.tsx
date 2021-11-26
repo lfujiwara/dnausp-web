@@ -14,6 +14,7 @@ export interface CNAEChartProps {
   }[];
   groupByFunction: (data: CNAECountEntry) => string;
   groupLabels: { [key: string]: string | undefined };
+  fullSize?: boolean;
 }
 
 interface PieChartData {
@@ -54,7 +55,7 @@ export const CNAEChart: FC<CNAEChartProps> = (props) => {
   const { data } = useCNAEChart(props);
 
   return (
-    <Box w="full" h="96">
+    <Box w="full" h={props.fullSize ? "90vh" : "75vh"} maxH="100vh">
       <ResponsivePie
         data={data}
         margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
@@ -70,7 +71,7 @@ export const CNAEChart: FC<CNAEChartProps> = (props) => {
         arcLinkLabelsColor={{ from: "color" }}
         arcLabelsSkipAngle={10}
         arcLabelsTextColor={{ from: "color", modifiers: [["darker", 2]] }}
-        arcLabel={(arc) => arc.data.id}
+        arcLabel={(arc) => arc.data.value}
         id={(arc) => arc.label}
       />
     </Box>
