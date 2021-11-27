@@ -3049,6 +3049,11 @@ just-clone@^5.0.0:
   resolved "https://registry.yarnpkg.com/just-clone/-/just-clone-5.0.0.tgz#da36de8355fe6c0cae2cbeee413b479f49bb11e5"
   integrity sha512-XZ/N6GYZvmFQ+qnXFLaRNAOsnGF5EYXDJ8M9Xu8XaKMlvRe4lVrVv1GBbYXR3jT7KW3ywcrQSbk/70grC8MYbw==
 
+jwt-decode@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-3.1.2.tgz#3fb319f3675a2df0c2895c8f5e9fa4b67b04ed59"
+  integrity sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==
+
 language-subtag-registry@~0.3.2:
   version "0.3.21"
   resolved "https://registry.npmjs.org/language-subtag-registry/-/language-subtag-registry-0.3.21.tgz"
