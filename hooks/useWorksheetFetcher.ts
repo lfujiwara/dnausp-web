@@ -1,7 +1,7 @@
-import { WorksheetData } from "../lib/sheets/sheet";
-import { fetchWorksheet } from "../lib/sheets/fetch-worksheet";
-import { useGoogleAuthData } from "../auth/google/google-auth.context";
+import { WorksheetData } from "@sheets/sheet";
+import { fetchWorksheet } from "@sheets/fetch-worksheet";
 import { useState } from "react";
+import { useGAPIAccessToken } from "./useGAPIAccessToken";
 
 type WorksheetFetcherState = {
   spreadsheetId: string;
@@ -22,13 +22,12 @@ const defaultState = {
 };
 
 export const useWorksheetFetcher = () => {
-  const { accessToken } = useGoogleAuthData();
-
   const [state, setState] = useState<WorksheetFetcherState>(defaultState);
+  const token = useGAPIAccessToken();
 
   const _fetchWorksheet = async (spreadsheetId: string, worksheet: string) => {
     setState({ ...state, isLoading: true, isError: false });
-    return fetchWorksheet(spreadsheetId, worksheet, accessToken).then((data) =>
+    return fetchWorksheet(spreadsheetId, worksheet, token).then((data) =>
       setState({
         spreadsheetId,
         worksheet,

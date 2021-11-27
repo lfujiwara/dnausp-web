@@ -54,6 +54,7 @@ export const SpreadsheetWorksheetSelector = ({
           <Box pt="4">
             <Box mb="2">Selecione uma subplanilha para continuar:</Box>
             <Select onChange={(evt) => setSelectedWorksheet(evt.target.value)}>
+              <option value="">Selecione uma subplanilha</option>
               {spreadsheetMetadata?.worksheets.map((worksheet) => (
                 <option key={worksheet} value={worksheet}>
                   {worksheet}

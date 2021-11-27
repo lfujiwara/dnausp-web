@@ -1,17 +1,13 @@
+import { validateInstituto } from "@domain/validation/instituto";
+import { validateNome } from "@domain/validation/nome";
 import * as yup from "yup";
-
-import { DefaultWorksheet } from "../../defaults/default-worksheet";
-import FuzzySet from "fuzzyset";
 import { Result } from "../../../common/result";
+import { DefaultWorksheet } from "../../defaults/default-worksheet";
 import { RowValidatorEntry } from "../validator-base";
-import _institutos from "./institutos.json";
-
-const institutosSet = FuzzySet(
-  _institutos.map((instituto) => `${instituto.nome} - ${instituto.sigla}`)
-);
 
 export const validarInstituto = (instituto: string) => {
-  return institutosSet.get(instituto) !== null;
+  const result = validateInstituto(instituto);
+  return result.isOk();
 };
 
 export const validarEmail = (email: string) => {
@@ -24,7 +20,8 @@ export const validarNome = (nome: string) => {
 };
 
 export const validarNUSP = (nusp: string) => {
-  return /^\d+$/.test(nusp.trim());
+  nusp = nusp.replace(/[^0-9]/g, "");
+  return /^\d+$/.test(nusp);
 };
 
 const getInstituto = (n: number) => (row: Partial<DefaultWorksheet>) => {
@@ -105,13 +102,17 @@ export const SocioValidatorEntryPrototype: (n: number) => RowValidatorEntry = (
   validator: async (row: Partial<DefaultWorksheet>) => {
     const errors: string[] = [];
 
-    const instituto = getInstituto(n)(row);
+    const resultInstituto = validateInstituto(getInstituto(n)(row) + "");
     const email = getEmail(n)(row);
     const nusp = getNUSP(n)(row);
-    const nome = getNome(n)(row);
+    const resultNome = validateNome(getNome(n)(row) + "", true);
 
-    if (instituto && !validarInstituto(instituto)) {
-      errors.push(`Instituto inválido: ${instituto}`);
+    if (resultInstituto.isErr()) {
+      errors.push(`Instituto inválido: ${resultInstituto.value}`);
+    }
+
+    if (resultNome.isErr()) {
+      errors.push(`Nome inválido: ${resultNome.value}`);
     }
 
     if (email && !validarEmail(email)) {
@@ -120,10 +121,6 @@ export const SocioValidatorEntryPrototype: (n: number) => RowValidatorEntry = (
 
     if (nusp && !validarNUSP(nusp)) {
       errors.push(`NUSP inválido: ${nusp}`);
-    }
-
-    if (nome && !validarNome(nome)) {
-      errors.push(`Nome inválido: ${nome}`);
     }
 
     if (errors.length === 0) return Result.ok(row);
@@ -137,4 +134,4 @@ export const SocioValidatorEntryPrototype: (n: number) => RowValidatorEntry = (
 export const SocioValidatorEntries = Array(5)
   .fill(0)
   .map((_, i) => i)
-  .map((i) => SocioValidatorEntryPrototype(i));
+  .map((i) => SocioValidatorEntryPrototype(i + 1));

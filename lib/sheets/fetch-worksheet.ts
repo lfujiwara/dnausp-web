@@ -1,6 +1,7 @@
 import { RawWorksheetData, WorksheetData } from "./sheet";
 
 import { FetchHeaders } from "../common/fetch-headers";
+import { duplicateFieldsTransformer } from "./transformers/duplicate-fields.transformer";
 
 const isRowNotEmpty = (row: string[]) =>
   row.length !== 0 && row.some((cell) => !!cell);
@@ -22,6 +23,6 @@ export const fetchWorksheet = (
     .then((res) => res.json())
     .then((data: RawWorksheetData) => data.values)
     .then((values) => ({
-      header: values[0] || [],
+      header: duplicateFieldsTransformer(values[0] || []),
       rows: values.slice(1).filter(isRowNotEmpty),
     }));

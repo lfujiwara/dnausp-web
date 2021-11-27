@@ -3,22 +3,30 @@ import "../styles/map.css";
 import "leaflet/dist/leaflet.css";
 import "react-leaflet-markercluster/dist/styles.min.css";
 
+import { SessionProvider } from "next-auth/react";
+
 import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Footer } from "../components/layout/Footer";
-import { GoogleAuthManagerProvider } from "../auth/google/google-auth.context";
 import { Header } from "../components/layout/Header";
 import { theme } from "../styles/theme";
+import { BackendAuthProvider } from "@auth/backend/backend-auth-context";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <GoogleAuthManagerProvider>
-      <ChakraProvider theme={theme}>
-        <Header />
-        <Component {...pageProps} />
-        <Footer />
-      </ChakraProvider>
-    </GoogleAuthManagerProvider>
+    <ChakraProvider theme={theme}>
+      <QueryClientProvider client={new QueryClient()}>
+        <SessionProvider session={pageProps.session}>
+          <BackendAuthProvider>
+            <Header />
+            <Component {...pageProps} />
+            <Footer />
+          </BackendAuthProvider>
+        </SessionProvider>
+      </QueryClientProvider>
+    </ChakraProvider>
   );
 }
+
 export default MyApp;

@@ -17,7 +17,26 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true
+    "experimentalDecorators": true,
+    "incremental": true,
+    "baseUrl": "./",
+    "paths": {
+      "@common/*": [
+        "lib/common/*"
+      ],
+      "@domain/*": [
+        "lib/domain/*"
+      ],
+      "@sheets/*": [
+        "lib/sheets/*"
+      ],
+      "@json-assets/*": [
+        "json/*"
+      ],
+      "@auth/*": [
+        "auth/*"
+      ]
+    }
   },
   "include": [
     "next-env.d.ts",
