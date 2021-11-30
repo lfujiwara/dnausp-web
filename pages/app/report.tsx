@@ -7,9 +7,9 @@ import {
   CNAEClassifier,
   CNAEClassifiers,
 } from "../../components/charts/classifiers/cnae-classifiers";
-import { useCNAEStatsQuery } from "../../backend/queries/CNAEStatsQuery";
 import { Center, Text, VStack } from "@chakra-ui/layout";
 import { Select } from "@chakra-ui/select";
+import { useCNAEStatsQuery } from "../../backend/queries/CNAEStatsQuery";
 
 function SelectCNAEClassifier(props: {
   onChange: (evt: ChangeEvent<HTMLSelectElement>) => void;

@@ -1,5 +1,3 @@
-import { StandardizeRevenueColumn } from "../sheets/widgets/standardize-revenue-columns";
-
 const columns = [
   "Qual foi o faturamento da empresa em 2020? (R$)",
   "Faturamento 2018 (RFB)",
