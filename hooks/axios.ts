@@ -2,7 +2,7 @@ import _axios from "axios";
 import { useBackendAuthManager } from "@auth/backend/use-backend-auth-manager";
 
 export const useAxios = () => {
-  const { token } = useBackendAuthManager();
+  const { token, handleLogout } = useBackendAuthManager();
 
   const axios = _axios.create({
     baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
@@ -18,6 +18,14 @@ export const useAxios = () => {
     };
     return req;
   });
+
+  axios.interceptors.response.use(
+    (req) => req,
+    (error) => {
+      if (error.response.status === 401) handleLogout();
+      return Promise.reject(error);
+    }
+  );
 
   return axios;
 };
