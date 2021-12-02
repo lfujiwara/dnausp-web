@@ -10,12 +10,11 @@ const storeInLocalStorage = (token: string) =>
 const removeFromLocalStorage = () =>
   localStorage.removeItem(LOCAL_STORAGE_TOKEN_KEY);
 
-const decode = (jwt: string) => {
+const decode = (jwt: string): any => {
   try {
-    const data: any = jwtDecode(jwt);
-    return data;
+    return jwtDecode(jwt);
   } catch (err) {
-    console.log("Error loading token", err);
+    console.error("Error loading token", err);
   }
   return null;
 };
@@ -29,9 +28,8 @@ export const useBackendAuthManager = () => {
 
   const handleJWT = (jwt: string) => {
     const result = decode(jwt);
-    if (result === null) return;
 
-    if (result.status !== "OK")
+    if (!result || result.status !== "OK")
       return { status: result.status, reason: result.reason };
 
     storeInLocalStorage(jwt);
