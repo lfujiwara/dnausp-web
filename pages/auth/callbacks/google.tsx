@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { useBackendAuthManager } from "@auth/backend/use-backend-auth-manager";
-import { Center } from "@chakra-ui/react";
-import { Text } from "@chakra-ui/layout";
+import { Center, CircularProgress } from "@chakra-ui/react";
+import { Text, VStack } from "@chakra-ui/layout";
 
 const errorMessage = (code: string) => {
   if (code === "WHITELIST") {
@@ -28,12 +28,18 @@ export default function Google() {
   }, [router.query]);
 
   useEffect(() => {
-    if (m.isAuthenticated) handleIsAuthenticated();
+    if (m.isAuthenticated) handleIsAuthenticated().then(() => undefined);
   }, [m.isAuthenticated]);
 
   return (
-    <Center>
-      {!error ? <Text>Finalizando login...</Text> : <Text>{error}</Text>}
+    <Center p="6">
+      {!error && (
+        <VStack align="center">
+          <Text>Finalizando login</Text>
+          <CircularProgress isIndeterminate />
+        </VStack>
+      )}
+      {error && <Text>Erro ao completar login.</Text>}
     </Center>
   );
 }
