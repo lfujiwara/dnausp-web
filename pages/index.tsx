@@ -1,37 +1,37 @@
-import { Container } from "@chakra-ui/react";
-import { VisualizeWorksheet } from "components/sheets/VisualizeWorksheet";
 import React from "react";
-import { SpreadsheetWorksheetSelector } from "../components/sheets/SpreadsheetSelector";
-import { useSpreadsheetWorksheetSelector } from "../hooks/useSpreadsheetWorksheetSelector";
-import { Box } from "@chakra-ui/layout";
-
-const Logado = () => {
-  const spreadsheetWorksheetSelector = useSpreadsheetWorksheetSelector();
-  const { spreadsheetId, selectedWorksheet, isLoaded } =
-    spreadsheetWorksheetSelector;
-  return (
-    <div>
-      <SpreadsheetWorksheetSelector {...spreadsheetWorksheetSelector} />
-      {isLoaded && spreadsheetId && selectedWorksheet && (
-        <>
-          <VisualizeWorksheet
-            spreadsheetId={spreadsheetId}
-            worksheet={selectedWorksheet}
-          />
-        </>
-      )}
-    </div>
-  );
-};
-
-const InnerPage = () => {
-  return (
-    <Container py="6">
-      <Logado />
-    </Container>
-  );
-};
+import { Link, VStack } from "@chakra-ui/react";
+import NextLink from "next/link";
+import { Center, Text } from "@chakra-ui/layout";
 
 export default function SheetsPage() {
-  return <Box>Em construção</Box>;
+  return (
+    <Center py="4">
+      <VStack align="center">
+        <Text>
+          Você está logado, clique nos links para acessar os recursos.
+        </Text>
+        <VStack
+          spacing="4"
+          rounded="md"
+          py="4"
+          px="6"
+          bgColor="gray.200"
+          mt="4"
+        >
+          <Link as="span">
+            <NextLink href="/">Home</NextLink>
+          </Link>
+          <Link as="span">
+            <NextLink href="/report">Relatórios</NextLink>
+          </Link>
+          <Link as="span">
+            <NextLink href="/consulta-cnpj">Consulta CNPJ</NextLink>
+          </Link>
+          <Link as="span">
+            <NextLink href="/mapa">Mapa</NextLink>
+          </Link>
+        </VStack>
+      </VStack>
+    </Center>
+  );
 }
