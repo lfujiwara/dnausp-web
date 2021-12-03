@@ -1,7 +1,6 @@
 import { WorksheetData } from "@sheets/sheet";
 import { fetchWorksheet } from "@sheets/fetch-worksheet";
 import { useState } from "react";
-import { useGAPIAccessToken } from "./useGAPIAccessToken";
 
 type WorksheetFetcherState = {
   spreadsheetId: string;
@@ -23,7 +22,7 @@ const defaultState = {
 
 export const useWorksheetFetcher = () => {
   const [state, setState] = useState<WorksheetFetcherState>(defaultState);
-  const token = useGAPIAccessToken();
+  const token = "";
 
   const _fetchWorksheet = async (spreadsheetId: string, worksheet: string) => {
     setState({ ...state, isLoading: true, isError: false });

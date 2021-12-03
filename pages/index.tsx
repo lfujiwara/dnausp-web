@@ -1,9 +1,9 @@
 import { Container } from "@chakra-ui/react";
 import { VisualizeWorksheet } from "components/sheets/VisualizeWorksheet";
 import React from "react";
-import { RequireGoogleLogin } from "../components/layout/RequireGoogleLogin";
 import { SpreadsheetWorksheetSelector } from "../components/sheets/SpreadsheetSelector";
 import { useSpreadsheetWorksheetSelector } from "../hooks/useSpreadsheetWorksheetSelector";
+import { Box } from "@chakra-ui/layout";
 
 const Logado = () => {
   const spreadsheetWorksheetSelector = useSpreadsheetWorksheetSelector();
@@ -33,9 +33,5 @@ const InnerPage = () => {
 };
 
 export default function SheetsPage() {
-  return (
-    <RequireGoogleLogin>
-      <InnerPage />
-    </RequireGoogleLogin>
-  );
+  return <Box>Em construção</Box>;
 }

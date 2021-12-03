@@ -1,7 +1,6 @@
 import { SpreadsheetMetadata } from "@sheets/spreadsheet-metadata";
 import { fetchSpreadsheetMetadata } from "@sheets/fetch-spreadsheet-metadata";
 import { useState } from "react";
-import { useGAPIAccessToken } from "./useGAPIAccessToken";
 
 export type TSpreadsheetWorksheetSelector = {
   spreadsheetId: string;
@@ -18,7 +17,7 @@ export type TSpreadsheetWorksheetSelector = {
 
 export const useSpreadsheetWorksheetSelector =
   (): TSpreadsheetWorksheetSelector => {
-    const accessToken = useGAPIAccessToken();
+    const accessToken = "";
 
     type SpreadsheetWorksheetSelectorState = {
       spreadsheetId: string;

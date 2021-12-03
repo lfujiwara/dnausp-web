@@ -39,16 +39,16 @@ export function NavDrawer() {
           <DrawerHeader>Páginas</DrawerHeader>
           <DrawerBody>
             <VStack spacing="4">
-              <Link>
-                <NextLink href="/app">Home</NextLink>
+              <Link as="span">
+                <NextLink href="/">Home</NextLink>
               </Link>
-              <Link>
-                <NextLink href="/app/report">Relatórios</NextLink>
+              <Link as="span">
+                <NextLink href="/report">Relatórios</NextLink>
               </Link>
-              <Link>
+              <Link as="span">
                 <NextLink href="/consulta-cnpj">Consulta CNPJ</NextLink>
               </Link>
-              <Link>
+              <Link as="span">
                 <NextLink href="/mapa">Mapa</NextLink>
               </Link>
             </VStack>

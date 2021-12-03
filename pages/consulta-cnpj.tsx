@@ -30,8 +30,8 @@ const RenderValue = ({
         <Box spacing="2" p="2" {...border}>
           <Text>{label}</Text>
           <Box m="2">
-            {Object.entries(value).map(([key, value]) => (
-              <RenderValue key={key} label={key} value={value} />
+            {Object.entries(value).map(([key, val]) => (
+              <RenderValue key={key} label={key} value={val} />
             ))}
           </Box>
         </Box>
@@ -46,14 +46,14 @@ const RenderValue = ({
   );
 };
 
-export default function () {
+export default function ConsultaCnpjPage() {
   const ref = useRef<HTMLInputElement>(null);
   const [isError, setIsError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<any>();
 
   const handleSubmit: EventHandler<any> = (evt) => {
-    const actualCNPJ = (ref.current?.value + "").replace(/[^0-9]/g, "");
+    const actualCNPJ = (ref.current?.value + "").replace(/\D/g, "");
     if (validateCNPJ(actualCNPJ)) {
       setIsLoading(true);
       fetch(`https://brasilapi.com.br/api/cnpj/v1/${actualCNPJ}`)
@@ -63,7 +63,7 @@ export default function () {
           setData(res);
           setIsError("");
         })
-        .catch((err) => {
+        .catch(() => {
           setIsLoading(false);
           setIsError("servidor");
         });
@@ -81,7 +81,7 @@ export default function () {
         <form onSubmit={handleSubmit}>
           <FormControl id="cnpj" isInvalid={!!isError}>
             <FormLabel>CNPJ</FormLabel>
-            <Input isInvalid={!!isError} type="text" ref={ref} />
+            <Input isInvalid={!!isError} type="text" ref={ref}/>
             {isError.toLowerCase() === "cnpj" && (
               <FormErrorMessage>CNPJ inválido</FormErrorMessage>
             )}
@@ -95,15 +95,14 @@ export default function () {
               type="submit"
               isLoading={isLoading}
             >
-              {" "}
               Pesquisar
             </Button>
           </FormControl>
         </form>
         {data && !isError && (
           <Box my="2">
-            {Object.entries(data).map(([key, value]) => (
-              <RenderValue key={key} label={key} value={value} />
+            {Object.entries(data).map(([key, val]) => (
+              <RenderValue key={key} label={key} value={val}/>
             ))}
           </Box>
         )}
@@ -156,6 +155,6 @@ const validateCNPJ = (cnpj: string) => {
     if (pos < 2) pos = 9;
   }
   resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
-  if (resultado !== Number(digitos.charAt(1))) return false;
-  return true;
+  return resultado === Number(digitos.charAt(1));
+
 };
