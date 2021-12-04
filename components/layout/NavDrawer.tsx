@@ -43,6 +43,11 @@ export function NavDrawer() {
                 <NextLink href="/">Home</NextLink>
               </Link>
               <Link as="span">
+                <NextLink href="/load-data/sheets">
+                  Carregar dados (Google Sheets)
+                </NextLink>
+              </Link>
+              <Link as="span">
                 <NextLink href="/report">Relatórios</NextLink>
               </Link>
               <Link as="span">
