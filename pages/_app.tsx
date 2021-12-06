@@ -10,15 +10,18 @@ import { Header } from "../components/layout/Header";
 import { theme } from "../styles/theme";
 import { BackendAuthProvider } from "@auth/backend/backend-auth-context";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { GAPIAuthStateContextProvider } from "@auth/gapi/GAPIAuthContext";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
       <QueryClientProvider client={new QueryClient()}>
         <BackendAuthProvider>
-          <Header />
-          <Component {...pageProps} />
-          <Footer />
+          <GAPIAuthStateContextProvider>
+            <Header />
+            <Component {...pageProps} />
+            <Footer />
+          </GAPIAuthStateContextProvider>
         </BackendAuthProvider>
       </QueryClientProvider>
     </ChakraProvider>

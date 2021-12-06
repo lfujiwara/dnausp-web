@@ -1,13 +1,14 @@
+import { Box, HStack, Text } from "@chakra-ui/layout";
+import { EventHandler, useRef, useState } from "react";
 import {
   Center,
   FormControl,
   FormErrorMessage,
   FormLabel,
 } from "@chakra-ui/react";
-import { Box, HStack, Text } from "@chakra-ui/layout";
 import { Input } from "@chakra-ui/input";
-import { EventHandler, useRef, useState } from "react";
 import { Button } from "@chakra-ui/button";
+import Head from "next/head";
 
 const RenderValue = ({
   label,
@@ -73,41 +74,46 @@ export default function ConsultaCnpjPage() {
   };
 
   return (
-    <Center py="4">
-      <Box p="4" w="full" maxW="container.sm">
-        <Text fontSize="xl" fontWeight="bold">
-          Consulta CNPJ
-        </Text>
-        <form onSubmit={handleSubmit}>
-          <FormControl id="cnpj" isInvalid={!!isError}>
-            <FormLabel>CNPJ</FormLabel>
-            <Input isInvalid={!!isError} type="text" ref={ref}/>
-            {isError.toLowerCase() === "cnpj" && (
-              <FormErrorMessage>CNPJ inválido</FormErrorMessage>
-            )}
-            {isError.toLowerCase() === "servidor" && (
-              <FormErrorMessage>Erro ao consultar servidor</FormErrorMessage>
-            )}
-            <Button
-              mt="2"
-              colorScheme="blue"
-              w="full"
-              type="submit"
-              isLoading={isLoading}
-            >
-              Pesquisar
-            </Button>
-          </FormControl>
-        </form>
-        {data && !isError && (
-          <Box my="2">
-            {Object.entries(data).map(([key, val]) => (
-              <RenderValue key={key} label={key} value={val}/>
-            ))}
-          </Box>
-        )}
-      </Box>
-    </Center>
+    <>
+      <Head>
+        <title>Consulta CNPJ</title>
+      </Head>
+      <Center py="4">
+        <Box p="4" w="full" maxW="container.sm">
+          <Text fontSize="xl" fontWeight="bold">
+            Consulta CNPJ
+          </Text>
+          <form onSubmit={handleSubmit}>
+            <FormControl id="cnpj" isInvalid={!!isError}>
+              <FormLabel>CNPJ</FormLabel>
+              <Input isInvalid={!!isError} type="text" ref={ref} />
+              {isError.toLowerCase() === "cnpj" && (
+                <FormErrorMessage>CNPJ inválido</FormErrorMessage>
+              )}
+              {isError.toLowerCase() === "servidor" && (
+                <FormErrorMessage>Erro ao consultar servidor</FormErrorMessage>
+              )}
+              <Button
+                mt="2"
+                colorScheme="blue"
+                w="full"
+                type="submit"
+                isLoading={isLoading}
+              >
+                Pesquisar
+              </Button>
+            </FormControl>
+          </form>
+          {data && !isError && (
+            <Box my="2">
+              {Object.entries(data).map(([key, val]) => (
+                <RenderValue key={key} label={key} value={val} />
+              ))}
+            </Box>
+          )}
+        </Box>
+      </Center>
+    </>
   );
 }
 
@@ -156,5 +162,4 @@ const validateCNPJ = (cnpj: string) => {
   }
   resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
   return resultado === Number(digitos.charAt(1));
-
 };
