@@ -2,10 +2,10 @@ import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import { rowToObject } from "@common/row-to-object";
 import { DefaultWorksheet } from "@sheets/defaults/default-worksheet";
 import React from "react";
-import { LoadSheetDataAsDomain } from "./LoadSheetDataAsDomain";
 import { FilterByFoundedInYearRangeWidget } from "./widgets/filter-by-founded-in-year-range-widget";
 import { ValidatorWidget } from "./widgets/validator-widget";
 import { WorksheetData } from "@sheets/sheet";
+import { DomainMapper } from "./DomainMapper";
 
 export const VisualizeWorksheetV2 = ({
   worksheetData,
@@ -29,7 +29,7 @@ export const VisualizeWorksheetV2 = ({
               <FilterByFoundedInYearRangeWidget data={worksheetData} />
             </TabPanel>
             <TabPanel>
-              <LoadSheetDataAsDomain
+              <DomainMapper
                 inputs={
                   worksheetData.rows.map(
                     rowToObject(worksheetData.header)

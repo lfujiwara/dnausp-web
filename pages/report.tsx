@@ -10,6 +10,7 @@ import {
 import { Center, Text, VStack } from "@chakra-ui/layout";
 import { Select } from "@chakra-ui/select";
 import { useCNAEStatsQuery } from "../backend/queries/CNAEStatsQuery";
+import Head from "next/head";
 
 function SelectCNAEClassifier(props: {
   onChange: (evt: ChangeEvent<HTMLSelectElement>) => void;
@@ -46,34 +47,39 @@ function DashboardPage() {
   const query = useCNAEStatsQuery(filter);
 
   return (
-    <Box p="2">
-      <Center maxW="100vw">
-        <Container maxW="container.md">
-          <Heading>Distribuição CNAE - Empresas DNA USP</Heading>
-        </Container>
-      </Center>
-      <CNAEChart
-        data={query.data || []}
-        groupByFunction={(x) => groupMethod.classifier(x.cnae)}
-        groupLabels={groupMethod.labels}
-      />
-      <Center maxW="100vw">
-        <Container maxW="container.md">
-          <VStack spacing="2">
-            <Box w="full">
-              <Text fontSize="xl" mb="2" fontWeight="medium">
-                Filtrar
-              </Text>
-              <SelectCNAEClassifier
-                onChange={handleGroupMethodChange}
-                groupMethod={groupMethod}
-              />
-            </Box>
-            <FilterAggregate boxProps={{ w: "full" }} onApply={onApply} />
-          </VStack>
-        </Container>
-      </Center>
-    </Box>
+    <>
+      <Head>
+        <title>Relatório</title>
+      </Head>
+      <Box p="2">
+        <Center maxW="100vw">
+          <Container maxW="container.md">
+            <Heading>Distribuição CNAE - Empresas DNA USP</Heading>
+          </Container>
+        </Center>
+        <CNAEChart
+          data={query.data || []}
+          groupByFunction={(x) => groupMethod.classifier(x.cnae)}
+          groupLabels={groupMethod.labels}
+        />
+        <Center maxW="100vw">
+          <Container maxW="container.md">
+            <VStack spacing="2">
+              <Box w="full">
+                <Text fontSize="xl" mb="2" fontWeight="medium">
+                  Filtrar
+                </Text>
+                <SelectCNAEClassifier
+                  onChange={handleGroupMethodChange}
+                  groupMethod={groupMethod}
+                />
+              </Box>
+              <FilterAggregate boxProps={{ w: "full" }} onApply={onApply} />
+            </VStack>
+          </Container>
+        </Center>
+      </Box>
+    </>
   );
 }
 
