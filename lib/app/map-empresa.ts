@@ -1,6 +1,16 @@
 import { DefaultWorksheet } from "@sheets/defaults/default-worksheet";
-import { CNAE, CNPJ, Empresa } from "@dnausp/core";
+import { CNAE, CNPJ, Empresa, Faturamento } from "@dnausp/core";
 import { Result } from "typescript-monads";
+
+export type InputOutput<O = any, I = any> = {
+  input: I;
+  output: O;
+};
+export type MapEmpresaValue = {
+  root: Empresa;
+  faturamentos: InputOutput<Result<Faturamento, string[]>, [number, string]>[];
+};
+type FaturamentoEntry = [number, keyof DefaultWorksheet];
 
 const handleCNPJ = (
   raw: string
@@ -25,7 +35,7 @@ const handleEstrangeira = (raw: string) => {
 
 export const mapEmpresa = async (
   data: DefaultWorksheet
-): Promise<Result<Empresa, string[]>> => {
+): Promise<Result<MapEmpresaValue, string[]>> => {
   const errors: string[] = [];
 
   let id:
@@ -59,7 +69,24 @@ export const mapEmpresa = async (
 
   if (errors.length > 0) return Result.fail(errors);
 
-  return Empresa.create({
+  const faturamentos = (
+    [
+      [2018, "Faturamento 2018 (RFB)"],
+      [2019, "Faturamento 2019 (ou estimativa da RFB) com porte"],
+      [2020, "Qual foi o faturamento da empresa em 2020? (R$)"],
+    ] as FaturamentoEntry[]
+  )
+    .map(([ano, key]) => [ano, data[key]] as [number, string])
+    .map(([ano, value]) => ({
+      input: [ano, value] as [number, string],
+      output: Faturamento.create(
+        ano,
+        parseInt(value.slice(0, value.indexOf(",")).replace(/\D/g, ""), 10) *
+          100
+      ),
+    }));
+
+  const result = Empresa.create({
     ...id,
     razaoSocial,
     nomeFantasia,
@@ -67,5 +94,16 @@ export const mapEmpresa = async (
     atividadePrincipal,
     atividadeSecundaria: [],
     situacao,
+    faturamentos: faturamentos
+      .map((f) => f.output)
+      .filter((f) => f.isOk())
+      .map((f) => f.unwrap()),
+  });
+
+  if (result.isFail()) return Result.fail(result.unwrapFail());
+
+  return Result.ok({
+    root: result.unwrap(),
+    faturamentos,
   });
 };

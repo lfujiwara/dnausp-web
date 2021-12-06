@@ -1,30 +1,111 @@
-import { FC, useMemo } from "react";
+import { FC, useMemo, useState } from "react";
 import { CNPJ, Empresa } from "@dnausp/core";
-import { Column, Row, usePagination, useSortBy, useTable } from "react-table";
+import {
+  Cell,
+  Column,
+  Row,
+  usePagination,
+  useSortBy,
+  useTable,
+} from "react-table";
 import {
   Box,
   IconButton,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  ModalProps,
   Table,
   Tbody,
   Td,
   Th,
   Thead,
   Tr,
+  VStack,
 } from "@chakra-ui/react";
 import { HStack, Text } from "@chakra-ui/layout";
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
+import { MapEmpresaValue } from "../../lib/app/map-empresa";
+import { Button } from "@chakra-ui/button";
+import { useDisclosure } from "@chakra-ui/hooks";
+import { useSendEmpresaToBackend } from "../../hooks/useSendEmpresaToBackend";
+import { FaturamentosChart } from "../charts/FaturamentosChart";
 
-export const EmpresasTable: FC<{ empresas: Empresa[] }> = ({
+const FaturamentosModal = ({
+  empresa,
+  modalProps,
+}: {
+  empresa?: Empresa;
+  modalProps: Omit<ModalProps, "children">;
+}) => {
+  const fmt = Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+
+  const name = empresa?.razaoSocial || empresa?.nomeFantasia;
+  const faturamentos = [...(empresa?.faturamentos || [])].sort((a, b) =>
+    a.anoFiscal > b.anoFiscal ? 1 : -1
+  );
+
+  return (
+    <Modal {...modalProps}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Faturamento de {name}</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <FaturamentosChart faturamentos={faturamentos} />
+          <HStack justify="space-around" spacing="2">
+            {faturamentos.map((f) => (
+              <VStack key={f.anoFiscal} flex="1">
+                <Text textAlign="right">{f.anoFiscal}</Text>
+                <Text textAlign="right">{fmt.format(f.valor / 100)}</Text>
+              </VStack>
+            ))}
+          </HStack>
+        </ModalBody>
+        <ModalFooter>
+          <Button colorScheme="blue" mr={3} onClick={modalProps.onClose}>
+            Fechar
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+};
+
+export const EmpresasTable: FC<{ empresas: MapEmpresaValue[] }> = ({
   empresas = [],
 }) => {
+  const [empresaToDisplay, setEmpresaToDisplay] = useState<Empresa | undefined>(
+    undefined
+  );
+  const faturamentosModal = useDisclosure();
+  const mutation = useSendEmpresaToBackend();
+
+  const openFaturamento = (empresa: Empresa) => () => {
+    setEmpresaToDisplay(empresa);
+    faturamentosModal.onOpen();
+  };
+
   const data = useMemo(
     () =>
-      empresas.map((e) => ({
+      empresas.map(({ root: e, faturamentos }) => ({
         cnpj: e.estrangeira
           ? `Exterior ${e.idEstrangeira}`.trim()
           : CNPJ.formatCNPJ(e.cnpj?.get() + ""),
         nomeFantasia: e.nomeFantasia,
         razaoSocial: e.razaoSocial,
+        faturamentos: {
+          empresa: e,
+          results: faturamentos,
+        },
+        send: e,
       })),
     [empresas]
   );
@@ -43,6 +124,43 @@ export const EmpresasTable: FC<{ empresas: Empresa[] }> = ({
         {
           Header: "Razão social",
           accessor: "razaoSocial",
+        },
+        {
+          Header: "Faturamentos",
+          accessor: "faturamentos",
+          Cell: ({
+            cell,
+          }: {
+            cell: Cell<{
+              empresa: Empresa;
+              results: any;
+            }>;
+          }) => (
+            <Button onClick={openFaturamento(cell.value.empresa)}>
+              Ver faturamentos
+            </Button>
+          ),
+        },
+        {
+          Header: "Ações",
+          accessor: "send",
+          Cell: ({ cell }: { cell: Cell<Empresa> }) => {
+            const [isLoading, setIsLoading] = useState(false);
+            return (
+              <Button
+                onClick={() => {
+                  setIsLoading(true);
+                  mutation.mutate(cell.value, {
+                    onSuccess: () => setIsLoading(false),
+                    onError: () => setIsLoading(false),
+                  });
+                }}
+                isLoading={isLoading}
+              >
+                Enviar dados
+              </Button>
+            );
+          },
         },
       ] as Column<{
         cnpj: string;
@@ -68,6 +186,10 @@ export const EmpresasTable: FC<{ empresas: Empresa[] }> = ({
 
   return (
     <Box>
+      <FaturamentosModal
+        empresa={empresaToDisplay}
+        modalProps={faturamentosModal}
+      />
       <HStack align="center" justify="space-between">
         <IconButton
           aria-label="prev"
