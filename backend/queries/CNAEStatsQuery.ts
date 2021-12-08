@@ -5,7 +5,7 @@ export const useCNAEStatsQuery = (params: any) => {
   const axios = useAxios();
 
   return useQuery(
-    ["/empresas/cnae/stats"],
+    ["/empresas/cnae/stats", params],
     () =>
       axios
         .get("/empresas/cnae/stats", {
@@ -17,10 +17,10 @@ export const useCNAEStatsQuery = (params: any) => {
               cnae: string;
               count: number;
             }[]
-        )
-        .catch((err) => []),
+        ),
     {
       initialData: [],
+      keepPreviousData: true,
     }
   );
 };
