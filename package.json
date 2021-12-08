@@ -14,6 +14,7 @@
     "@dnausp/core": "^0.0.1-alpha.4",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "@nivo/bar": "^0.74.0",
     "@nivo/core": "^0.74.0",
     "@nivo/pie": "^0.74.0",
     "@types/leaflet": "^1.7.5",

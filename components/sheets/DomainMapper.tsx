@@ -9,9 +9,7 @@ import {
   TabPanels,
   Tabs,
 } from "@chakra-ui/react";
-import { mapEmpresa } from "../../lib/app/map-empresa";
-import { Empresa } from "@dnausp/core";
-import { Result } from "typescript-monads";
+import { mapEmpresa, MapEmpresaValue } from "../../lib/app/map-empresa";
 import { EmpresasTable } from "../tables/EmpresasTable";
 import { EmpresasErrorTable } from "../tables/EmpresasErrorTable";
 
@@ -20,7 +18,7 @@ type MappedResult<T> = {
   output: T;
 };
 
-type OkResult = MappedResult<Empresa>;
+type OkResult = MappedResult<MapEmpresaValue>;
 type FailResult = MappedResult<string[]>;
 
 type State = {
@@ -38,13 +36,12 @@ export const DomainMapper: FC<{ inputs: DefaultWorksheet[] }> = ({
     try {
       setLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      const results: MappedResult<Result<Empresa, string[]>>[] =
-        await Promise.all(
-          inputs.map(async (input) => ({
-            input,
-            output: await mapEmpresa(input),
-          }))
-        );
+      const results = await Promise.all(
+        inputs.map(async (input) => ({
+          input,
+          output: await mapEmpresa(input),
+        }))
+      );
       setData({
         ok: results
           .filter((result) => result.output.isOk())
@@ -75,7 +72,7 @@ export const DomainMapper: FC<{ inputs: DefaultWorksheet[] }> = ({
             </TabList>
             <TabPanels>
               <TabPanel>
-                <EmpresasTable empresas={data.ok.map((e) => e.output)} />
+                <EmpresasTable empresas={data.ok.map((r) => r.output)} />
               </TabPanel>
               <TabPanel>
                 <EmpresasErrorTable results={data.fail} />
