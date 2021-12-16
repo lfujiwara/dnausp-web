@@ -12,7 +12,7 @@ const keySet = Object.values(Instituto).reduce(
 const institutoSet = FuzzySet(Object.keys(keySet));
 
 export const getInstituto = (s: string) => {
-  const result = institutoSet.get(s);
+  const result = institutoSet.get(s.split(";")[0]);
   if (result === null) return undefined;
   return keySet[result[0][1]] as Instituto;
 };

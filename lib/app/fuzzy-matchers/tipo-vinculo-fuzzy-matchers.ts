@@ -4,7 +4,9 @@ import { TipoVinculo } from "@dnausp/core";
 const tipoVinculoSet = FuzzySet(Object.values(TipoVinculo));
 
 const formsMap = {
-  "Aluno ou ex-aluno de graduação": TipoVinculo.GRADUACAO,
+  "Aluno ou ex-aluno de graduação (graduação)": TipoVinculo.GRADUACAO,
+  "Aluno ou ex-aluno (pós-graduação)": TipoVinculo.POS_GRADUACAO,
+  "Aluno ou ex-aluno (graduação)": TipoVinculo.GRADUACAO,
   "Aluno ou ex-aluno de pós-graduação (mestrado ou doutorado)":
     TipoVinculo.POS_GRADUACAO,
   "Aluno ou ex-aluno de pós-graduação do IPEN (Instituto de Pesquisas Energéticas e Nucleares)":
@@ -17,19 +19,20 @@ const formsMap = {
     TipoVinculo.INCUBACAO,
 };
 
-const formsMapSet = FuzzySet(Object.values(formsMap));
+const formsMapSet = FuzzySet(Object.keys(formsMap));
 
 export const getTipoVinculoFromFormsMapSet = (s: string) => {
   const resultBackup = formsMapSet.get(s);
   if (resultBackup === null) {
     return undefined;
   }
-  return resultBackup[0][1] as TipoVinculo;
+  return formsMap[resultBackup[0][1]] as TipoVinculo;
 };
 
 export const getTipoVinculo = (s: string) => {
   if (!s) return undefined;
+  s = s.split(";")[0];
   const result = tipoVinculoSet.get(formsMap[s] || s);
-  if (result === null) return getTipoVinculoFromFormsMapSet(s);
+  if (!result) return getTipoVinculoFromFormsMapSet(s);
   return result[0][1] as TipoVinculo;
 };

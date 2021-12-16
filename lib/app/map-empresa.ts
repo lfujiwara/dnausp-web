@@ -29,8 +29,8 @@ const extractSocio = (
     telefone,
     vinculo: {
       tipo: getTipoVinculo(vinculo),
-      NUSP: nusp,
-      instituto: getInstituto(instituto),
+      NUSP: nusp || undefined,
+      instituto: getInstituto(instituto) || undefined,
     },
   };
 };
