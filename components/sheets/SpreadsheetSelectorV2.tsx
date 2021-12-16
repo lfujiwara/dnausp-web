@@ -26,13 +26,11 @@ const useLoad = () => {
 };
 
 export const SpreadsheetSelectorV2 = ({
-  setWorksheetData,
-}: {
+                                        setWorksheetData,
+                                      }: {
   setWorksheetData: (worksheetData: WorksheetData) => any;
 }) => {
-  const [spreadsheet, setSpreadsheet] = useState<
-    SpreadsheetMetadata | undefined
-  >();
+  const [spreadsheet, setSpreadsheet] = useState<SpreadsheetMetadata | undefined>();
 
   const spreadsheetLoad = useLoad();
   const worksheetLoad = useLoad();
@@ -58,8 +56,8 @@ export const SpreadsheetSelectorV2 = ({
       description: err + "",
     });
   };
-  const onSubmitSpreadsheetId = (evt: ChangeEvent<HTMLFormElement>) => {
-    evt.preventDefault();
+  const onSubmitSpreadsheetId = (evt?: ChangeEvent<HTMLFormElement>) => {
+    evt?.preventDefault();
     if (!spreadsheetIdRef.current || !spreadsheetIdRef.current?.value) return;
     const value = parseSpreadsheetId(spreadsheetIdRef.current.value.trim());
     spreadsheetLoad.startLoading();
@@ -80,8 +78,8 @@ export const SpreadsheetSelectorV2 = ({
       description: err + "",
     });
   };
-  const onSubmitWorksheetId = (evt: ChangeEvent<HTMLFormElement>) => {
-    evt.preventDefault();
+  const onSubmitWorksheetId = (evt?: ChangeEvent<HTMLFormElement>) => {
+    evt?.preventDefault();
     if (
       !worksheetIdRef.current ||
       !worksheetIdRef.current?.value ||
@@ -96,82 +94,74 @@ export const SpreadsheetSelectorV2 = ({
       .finally(worksheetLoad.stopLoading);
   };
 
-  const fetchWorksheetFromLocalStorage = (spreadsheetId: string) => {
+  const fetchWorksheetFromLocalStorage = () => {
     const value = p.getSheet();
     if (!worksheetIdRef.current || !value) return;
     worksheetIdRef.current.value = value;
-    worksheetLoad.startLoading();
-    fetchWorksheetData(spreadsheetId, value)
-      .then(handleWorksheetData)
-      .catch(handleWorksheetDataError)
-      .finally(worksheetLoad.stopLoading);
+    onSubmitWorksheetId();
   };
 
   const fetchSpreadsheetFromLocalStorage = () => {
     const value = p.getSpreadsheet();
     if (!spreadsheetIdRef.current || !value) return;
     spreadsheetIdRef.current.value = value;
-    spreadsheetLoad.startLoading();
-    fetchSpreadsheetMetadata(value)
-      .then(handleSpreadsheetMetadata)
-      .then(() => fetchWorksheetFromLocalStorage(value))
-      .catch(handleSpreadsheetMetadataError)
-      .finally(spreadsheetLoad.stopLoading);
+    onSubmitSpreadsheetId();
   };
 
   useEffect(() => {
     fetchSpreadsheetFromLocalStorage();
   }, []);
 
+  useEffect(() => {
+    fetchWorksheetFromLocalStorage();
+  }, [spreadsheet]);
+
   return (
     <VStack spacing="2" align="stretch">
-      <form onSubmit={onSubmitSpreadsheetId}>
-        <Stack
-          spacing={[2, 2, 4]}
-          direction={["column", "row"]}
-          align={["stretch", "flex-end"]}
+      <Stack
+        spacing={[2, 2, 4]}
+        direction={["column", "row"]}
+        align={["stretch", "flex-end"]}
+      >
+        <FormControl id="email" isDisabled={spreadsheetLoad.isLoading}>
+          <FormLabel>Link ou ID da planilha no Google Docs</FormLabel>
+          <Input ref={spreadsheetIdRef}/>
+        </FormControl>
+        <Button
+          onClick={() => onSubmitSpreadsheetId()}
+          isLoading={spreadsheetLoad.isLoading}
         >
-          <FormControl id="email" isDisabled={spreadsheetLoad.isLoading}>
-            <FormLabel>Link ou ID da planilha no Google Docs</FormLabel>
-            <Input ref={spreadsheetIdRef} />
-          </FormControl>
-          <Button type="submit" isLoading={spreadsheetLoad.isLoading}>
-            Carregar
-          </Button>
-        </Stack>
-      </form>
-      <form onSubmit={onSubmitWorksheetId}>
-        <Stack
-          spacing={[2, 2, 4]}
-          direction={["column", "row"]}
-          align={["stretch", "flex-end"]}
+          Carregar
+        </Button>
+      </Stack>
+      <Stack
+        spacing={[2, 2, 4]}
+        direction={["column", "row"]}
+        align={["stretch", "flex-end"]}
+      >
+        <FormControl
+          id="email"
+          isDisabled={
+            !spreadsheet || worksheetLoad.isLoading || spreadsheetLoad.isLoading
+          }
         >
-          <FormControl
-            id="email"
-            isDisabled={
-              !spreadsheet ||
-              worksheetLoad.isLoading ||
-              spreadsheetLoad.isLoading
-            }
-          >
-            <FormLabel>Subplanilha/Folha</FormLabel>
-            <Select placeholder="Selecione a subplanilha" ref={worksheetIdRef}>
-              {spreadsheet?.worksheets.map((w) => (
-                <option key={w} value={w}>
-                  {w}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
-          <Button
-            type="submit"
-            isLoading={worksheetLoad.isLoading || spreadsheetLoad.isLoading}
-            isDisabled={!spreadsheet?.id}
-          >
-            Carregar
-          </Button>
-        </Stack>
-      </form>
+          <FormLabel>Subplanilha/Folha</FormLabel>
+          <Select placeholder="Selecione a subplanilha" ref={worksheetIdRef}>
+            {spreadsheet?.worksheets.map((w) => (
+              <option key={w} value={w}>
+                {w}
+              </option>
+            ))}
+          </Select>
+        </FormControl>
+        <Button
+          onClick={() => onSubmitWorksheetId()}
+          isLoading={worksheetLoad.isLoading || spreadsheetLoad.isLoading}
+          isDisabled={!spreadsheet?.id}
+        >
+          Carregar
+        </Button>
+      </Stack>
     </VStack>
   );
 };
