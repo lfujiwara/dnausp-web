@@ -123,6 +123,34 @@ export const mapEmpresa = async (
 
   const anoFundacao = parseInt(data["Ano de fundação"], 10);
 
+  const _historicoQuadroDeColaboradores = [
+    {
+      anoFiscal: new Date(data["Carimbo de data/hora"]).getFullYear(),
+      valor: parseInt(data["Número total de colaboradores"], 10),
+    },
+    {
+      anoFiscal: 2019,
+      valor: parseInt(data["Nº colaboradores (RAIS 2019 )"], 10),
+    },
+    {
+      anoFiscal: 2018,
+      valor: parseInt(data["Nº colaboradores (RAIS 2018 ) )"], 10),
+    },
+    {
+      anoFiscal: 2015,
+      valor: parseInt(data["Nº colaboradores (RAIS 2015 ) )"], 10),
+    },
+  ].reduce((acc, { anoFiscal, valor }) => {
+    acc[anoFiscal] = {
+      anoFiscal,
+      valor,
+    };
+    return acc;
+  }, {} as { [key: number]: { anoFiscal: number; valor: number } });
+  const historicoQuadroDeColaboradores = Object.values(
+    _historicoQuadroDeColaboradores
+  );
+
   const result = EmpresaFactory.create({
     cnpj: data["CNPJ"],
     estrangeira,
@@ -136,24 +164,7 @@ export const mapEmpresa = async (
     faturamentos,
     incubacoes,
     socios,
-    historicoQuadroDeColaboradores: [
-      {
-        anoFiscal: new Date(data["Carimbo de data/hora"]).getFullYear(),
-        valor: parseInt(data["Número total de colaboradores"], 10),
-      },
-      {
-        anoFiscal: 2019,
-        valor: parseInt(data["Nº colaboradores (RAIS 2019 )"], 10),
-      },
-      {
-        anoFiscal: 2018,
-        valor: parseInt(data["Nº colaboradores (RAIS 2018 ) )"], 10),
-      },
-      {
-        anoFiscal: 2015,
-        valor: parseInt(data["Nº colaboradores (RAIS 2015 ) )"], 10),
-      },
-    ],
+    historicoQuadroDeColaboradores,
     historicoInvestimentos: [
       extractInvestimento(
         OrigemInvestimento.PROPRIO,

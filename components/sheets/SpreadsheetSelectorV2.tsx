@@ -10,30 +10,21 @@ import { Button } from "@chakra-ui/button";
 import { WorksheetData } from "@sheets/sheet";
 import { Select } from "@chakra-ui/select";
 import { useFetchWorksheetData } from "../../hooks/useFetchWorksheetData";
-
-const useLoad = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string>("");
-
-  return {
-    isLoading: loading,
-    isError: error,
-    startLoading: () => setLoading(true),
-    stopLoading: () => setLoading(false),
-    setError: (err = "Erro") => setError(err),
-    clearError: () => setError(""),
-  };
-};
+import { useLoadingState } from "../../hooks/useLoading";
 
 export const SpreadsheetSelectorV2 = ({
-                                        setWorksheetData,
-                                      }: {
+  worksheetData,
+  setWorksheetData,
+}: {
+  worksheetData?: WorksheetData;
   setWorksheetData: (worksheetData: WorksheetData) => any;
 }) => {
-  const [spreadsheet, setSpreadsheet] = useState<SpreadsheetMetadata | undefined>();
+  const [spreadsheet, setSpreadsheet] = useState<
+    SpreadsheetMetadata | undefined
+  >();
 
-  const spreadsheetLoad = useLoad();
-  const worksheetLoad = useLoad();
+  const spreadsheetLoad = useLoadingState();
+  const worksheetLoad = useLoadingState();
 
   const spreadsheetIdRef = useRef<HTMLInputElement>(null);
   const worksheetIdRef = useRef<HTMLSelectElement>(null);
@@ -47,7 +38,7 @@ export const SpreadsheetSelectorV2 = ({
   const handleSpreadsheetMetadata = (data: SpreadsheetMetadata) => {
     setSpreadsheet(data);
     p.setSpreadsheet(data.id);
-    spreadsheetLoad.stopLoading();
+    spreadsheetLoad.setLoaded();
   };
   const handleSpreadsheetMetadataError = (err: any) => {
     toast({
@@ -60,11 +51,11 @@ export const SpreadsheetSelectorV2 = ({
     evt?.preventDefault();
     if (!spreadsheetIdRef.current || !spreadsheetIdRef.current?.value) return;
     const value = parseSpreadsheetId(spreadsheetIdRef.current.value.trim());
-    spreadsheetLoad.startLoading();
+    spreadsheetLoad.setLoading();
     fetchSpreadsheetMetadata(value)
       .then(handleSpreadsheetMetadata)
       .catch(handleSpreadsheetMetadataError)
-      .finally(spreadsheetLoad.stopLoading);
+      .finally(spreadsheetLoad.setLoaded);
   };
 
   const handleWorksheetData = (data: WorksheetData) => {
@@ -87,16 +78,16 @@ export const SpreadsheetSelectorV2 = ({
     )
       return;
     const worksheetId = worksheetIdRef.current.value.trim();
-    worksheetLoad.startLoading();
+    worksheetLoad.setLoading();
     fetchWorksheetData(spreadsheet.id, worksheetId)
       .then(handleWorksheetData)
       .catch(handleWorksheetDataError)
-      .finally(worksheetLoad.stopLoading);
+      .finally(worksheetLoad.setLoaded);
   };
 
   const fetchWorksheetFromLocalStorage = () => {
     const value = p.getSheet();
-    if (!worksheetIdRef.current || !value) return;
+    if (!worksheetIdRef.current || !value || worksheetData) return;
     worksheetIdRef.current.value = value;
     onSubmitWorksheetId();
   };
@@ -105,6 +96,7 @@ export const SpreadsheetSelectorV2 = ({
     const value = p.getSpreadsheet();
     if (!spreadsheetIdRef.current || !value) return;
     spreadsheetIdRef.current.value = value;
+    if (value === spreadsheet?.id) return;
     onSubmitSpreadsheetId();
   };
 
@@ -112,7 +104,10 @@ export const SpreadsheetSelectorV2 = ({
     fetchSpreadsheetFromLocalStorage();
   }, []);
 
+  let fuse = true;
   useEffect(() => {
+    if (!fuse) return;
+    fuse = false;
     fetchWorksheetFromLocalStorage();
   }, [spreadsheet]);
 
@@ -125,7 +120,7 @@ export const SpreadsheetSelectorV2 = ({
       >
         <FormControl id="email" isDisabled={spreadsheetLoad.isLoading}>
           <FormLabel>Link ou ID da planilha no Google Docs</FormLabel>
-          <Input ref={spreadsheetIdRef}/>
+          <Input ref={spreadsheetIdRef} />
         </FormControl>
         <Button
           onClick={() => onSubmitSpreadsheetId()}

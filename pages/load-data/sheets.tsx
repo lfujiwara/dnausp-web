@@ -17,7 +17,10 @@ function Sheets() {
   return (
     <Container maxW="container.lg" p="4">
       <Card>
-        <SpreadsheetSelectorV2 setWorksheetData={setWorksheetData} />
+        <SpreadsheetSelectorV2
+          worksheetData={worksheetData}
+          setWorksheetData={setWorksheetData}
+        />
         <Box h="2" />
         <VisualizeWorksheetV2 worksheetData={worksheetData} />
       </Card>
