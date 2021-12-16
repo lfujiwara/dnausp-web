@@ -1,5 +1,5 @@
 import { FC, useMemo, useState } from "react";
-import { CNPJ, Empresa } from "@dnausp/core";
+import { Empresa } from "@dnausp/core";
 import {
   Cell,
   Column,
@@ -48,8 +48,8 @@ const FaturamentosModal = ({
   });
 
   const name = empresa?.razaoSocial || empresa?.nomeFantasia;
-  const faturamentos = [...(empresa?.faturamentos || [])].sort((a, b) =>
-    a.anoFiscal > b.anoFiscal ? 1 : -1
+  const faturamentos = [...(empresa?.historicoFaturamentos.valores || [])].sort(
+    (a, b) => (a.anoFiscal > b.anoFiscal ? 1 : -1)
   );
 
   return (
@@ -95,17 +95,17 @@ export const EmpresasTable: FC<{ empresas: MapEmpresaValue[] }> = ({
 
   const data = useMemo(
     () =>
-      empresas.map(({ root: e, faturamentos }) => ({
-        cnpj: e.estrangeira
-          ? `Exterior ${e.idEstrangeira}`.trim()
-          : CNPJ.formatCNPJ(e.cnpj?.get() + ""),
-        nomeFantasia: e.nomeFantasia,
-        razaoSocial: e.razaoSocial,
+      empresas.map(({ output: empresa }) => ({
+        cnpj: empresa.estrangeira
+          ? `Exterior ${empresa.idEstrangeira}`.trim()
+          : empresa.cnpj.format(),
+        nomeFantasia: empresa.nomeFantasia,
+        razaoSocial: empresa.razaoSocial,
         faturamentos: {
-          empresa: e,
-          results: faturamentos,
+          empresa,
+          results: empresa.historicoFaturamentos.valores,
         },
-        send: e,
+        send: empresa,
       })),
     [empresas]
   );

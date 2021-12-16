@@ -7,7 +7,6 @@ export class EmpresaJsonSerializer {
   static serialize(empresa: Empresa) {
     return {
       id: empresa.id,
-
       idEstrangeira: empresa.idEstrangeira,
       estrangeira: empresa.estrangeira,
       cnpj: empresa.cnpj && CNPJJsonSerializer.serialize(empresa.cnpj),
@@ -21,9 +20,28 @@ export class EmpresaJsonSerializer {
         CNAEJsonSerializer.serialize
       ),
       situacao: empresa.situacao,
-      faturamentos: empresa.faturamentos.map(
+      faturamentos: empresa.historicoFaturamentos.valores.map(
         FaturamentoJsonSerializer.serialize
       ),
+      historicoQuadroDeColaboradores:
+        empresa.historicoQuadroDeColaboradores.valores.map(
+          ({ anoFiscal, valor }) => ({ anoFiscal, valor })
+        ),
+      historicoInvestimentos: empresa.historicoInvestimentos.map(
+        ({ anoFiscal, valor, origem }) => ({ anoFiscal, valor, origem })
+      ),
+      incubacoes: empresa.incubacoes.map((i) => ({
+        incubadora: i.incubadora,
+        estado: i.estado,
+      })),
+      socios: empresa.socios.map((s) => ({
+        nome: s.nome,
+        vinculo: {
+          tipo: s.vinculo.tipo,
+          NUSP: s.vinculo.NUSP,
+          instituto: s.vinculo.instituto,
+        },
+      })),
     };
   }
 }

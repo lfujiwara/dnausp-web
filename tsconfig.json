@@ -1,5 +1,11 @@
 {
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
     "target": "es5",
     "lib": [
       "dom",

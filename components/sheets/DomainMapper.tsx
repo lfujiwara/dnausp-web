@@ -8,23 +8,15 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  useToast,
 } from "@chakra-ui/react";
-import { mapEmpresa, MapEmpresaValue } from "../../lib/app/map-empresa";
+import { mapEmpresa } from "../../lib/app/map-empresa";
 import { EmpresasTable } from "../tables/EmpresasTable";
 import { EmpresasErrorTable } from "../tables/EmpresasErrorTable";
+import { useSendToBackendInBatch } from "../../backend/mutations/sendToBackendInBatch";
+import { useLoadingState } from "../../hooks/useLoading";
 
-type MappedResult<T> = {
-  input: DefaultWorksheet;
-  output: T;
-};
-
-type OkResult = MappedResult<MapEmpresaValue>;
-type FailResult = MappedResult<string[]>;
-
-type State = {
-  ok: OkResult[];
-  fail: FailResult[];
-};
+type State = any;
 
 export const DomainMapper: FC<{ inputs: DefaultWorksheet[] }> = ({
   inputs,
@@ -35,24 +27,36 @@ export const DomainMapper: FC<{ inputs: DefaultWorksheet[] }> = ({
   const map = async () => {
     try {
       setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const results = await Promise.all(
-        inputs.map(async (input) => ({
-          input,
-          output: await mapEmpresa(input),
-        }))
-      );
+      const results = await Promise.all(inputs.map(mapEmpresa));
       setData({
-        ok: results
-          .filter((result) => result.output.isOk())
-          .map((r) => ({ ...r, output: r.output.unwrap() })),
+        ok: results.filter((result) => result.isOk()).map((r) => r.unwrap()),
         fail: results
-          .filter((result) => result.output.isFail())
-          .map((r) => ({ ...r, output: r.output.unwrapFail() })),
+          .filter((result) => result.isFail())
+          .map((r) => r.unwrapFail()),
       });
     } finally {
       setLoading(false);
     }
+  };
+
+  const hookL = useLoadingState("stale");
+  const hook = useSendToBackendInBatch();
+  const toast = useToast();
+
+  const onSend = () => {
+    hookL.setLoading();
+    hook(data.ok.map((r) => r.output))
+      .then((v) => {
+        const { okCount, errorCount, totalCount } = v;
+        toast({
+          title: "Dados enviados",
+          description: `Sucesso: ${okCount}; Erro: ${errorCount}; Total: ${totalCount}`,
+          status: "success",
+        });
+        return v;
+      })
+      .then(hookL.setLoaded)
+      .catch(hookL.setError);
   };
 
   return (
@@ -61,6 +65,11 @@ export const DomainMapper: FC<{ inputs: DefaultWorksheet[] }> = ({
         <Button onClick={map} w="full" isLoading={loading}>
           Mapear
         </Button>
+        {!!data && (
+          <Button mt="2" w="full" isLoading={hookL.isLoading} onClick={onSend}>
+            Enviar dados
+          </Button>
+        )}
       </Box>
       {!!data && !loading && (
         <>
@@ -72,7 +81,7 @@ export const DomainMapper: FC<{ inputs: DefaultWorksheet[] }> = ({
             </TabList>
             <TabPanels>
               <TabPanel>
-                <EmpresasTable empresas={data.ok.map((r) => r.output)} />
+                <EmpresasTable empresas={data.ok} />
               </TabPanel>
               <TabPanel>
                 <EmpresasErrorTable results={data.fail} />

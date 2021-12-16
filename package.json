@@ -9,9 +9,10 @@
     "lint": "next lint",
     "format": "prettier --write {auth,components,constants,hooks,json,lib,pages,styles}/*"
   },
+  "license": "MIT",
   "dependencies": {
     "@chakra-ui/react": "^1.6.9",
-    "@dnausp/core": "^0.0.1-alpha.4",
+    "@dnausp/core": "^0.0.1-alpha.22",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@nivo/bar": "^0.74.0",
@@ -29,6 +30,7 @@
     "leaflet": "^1.7.1",
     "next": "12.0.5-canary.14",
     "papaparse": "^5.3.1",
+    "queue-promise": "^2.2.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-google-login": "^5.2.2",
@@ -41,6 +43,7 @@
   },
   "devDependencies": {
     "@types/fuzzyset": "^1.0.3",
+    "@types/node": "^16.11.12",
     "@types/papaparse": "^5.3.0",
     "@types/pg": "^8.6.1",
     "@types/react": "17.0.29",

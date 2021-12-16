@@ -1,74 +1,55 @@
 import { DefaultWorksheet } from "@sheets/defaults/default-worksheet";
-import { CNAE, CNPJ, Empresa, Faturamento } from "@dnausp/core";
+import { Empresa, EmpresaFactory, OrigemInvestimento } from "@dnausp/core";
 import { Result } from "typescript-monads";
+import {
+  getEstadoIncubacao,
+  getIncubadora,
+} from "./fuzzy-matchers/incubacao-fuzzy-matchers";
+import { getInstituto } from "./fuzzy-matchers/instituto-fuzzy-matchers";
+import { getTipoVinculo } from "./fuzzy-matchers/tipo-vinculo-fuzzy-matchers";
 
-export type InputOutput<O = any, I = any> = {
+export type InputOutput<I = any, O = any> = {
   input: I;
   output: O;
 };
-export type MapEmpresaValue = {
-  root: Empresa;
-  faturamentos: InputOutput<Result<Faturamento, string[]>, [number, string]>[];
-};
+export type MapEmpresaValue = InputOutput<DefaultWorksheet, Empresa>;
 type FaturamentoEntry = [number, keyof DefaultWorksheet];
 
-const handleCNPJ = (
-  raw: string
-): Result<{ cnpj: CNPJ; estrangeira: false }, string> => {
-  const result = CNPJ.create(raw);
-  if (result.isOk())
-    return Result.ok({ cnpj: result.unwrap(), estrangeira: false });
-  return Result.fail(result.unwrapFail());
+const extractSocio = (
+  nome: string,
+  email: string,
+  telefone: string,
+  vinculo: string,
+  nusp: string,
+  instituto: string
+) => {
+  return {
+    nome,
+    email,
+    telefone,
+    vinculo: {
+      tipo: getTipoVinculo(vinculo),
+      NUSP: nusp,
+      instituto: getInstituto(instituto),
+    },
+  };
 };
 
-const handleEstrangeira = (raw: string) => {
-  raw = raw.toLowerCase();
-  const toSearch = "exterior";
-  if (raw.indexOf(toSearch) === -1) Result.fail("Empresa não é estrangeira");
-  const index = raw.indexOf(toSearch) + toSearch.length;
-  const idEstrangeira = parseInt(raw.slice(index), 10);
-  return Result.ok({
-    estrangeira: true,
-    idEstrangeira,
-  });
-};
+const extractInvestimento = (
+  origem: OrigemInvestimento,
+  anoFiscal: number,
+  valor: string
+) => ({
+  origem,
+  anoFiscal,
+  valor: parseInt(valor.replace(/\D/g, "").replace(",", "."), 10),
+});
 
 export const mapEmpresa = async (
   data: DefaultWorksheet
-): Promise<Result<MapEmpresaValue, string[]>> => {
-  const errors: string[] = [];
-
-  let id:
-    | { cnpj: CNPJ; estrangeira: false }
-    | { estrangeira: boolean; idEstrangeira: number } = undefined as any;
-  let anoFundacao: number = undefined as any;
-  let atividadePrincipal: CNAE = undefined as any;
-  const razaoSocial = data["Razão social da empresa"];
-  const nomeFantasia = data["Nome fantasia da empresa"];
-  const situacao = data["Status operacional da empresa"];
-
-  const idResult = data.CNPJ.toLowerCase().includes("exterior")
-    ? handleEstrangeira(data.CNPJ)
-    : handleCNPJ(data.CNPJ);
-  if (idResult.isFail())
-    errors.push("Empresa sem CNPJ válido e sem ID estrangeira válida");
-  else id = idResult.unwrap();
-
-  const anoFundacaoResult = Empresa.validateAnoDeFundacao(
-    data["Ano de fundação"]
-  );
-  if (anoFundacaoResult.isFail())
-    errors.push("Empresa sem ano de fundação válido");
-  else anoFundacao = anoFundacaoResult.unwrap();
-
-  const cnaeResult = CNAE.create(
-    data["CNAE (Classificação Nacional de Atividades Econômicas) da empresa"]
-  );
-  if (cnaeResult.isFail()) errors.push("Empresa sem CNAE válido");
-  else atividadePrincipal = cnaeResult.unwrap();
-
-  if (errors.length > 0) return Result.fail(errors);
-
+): Promise<
+  Result<MapEmpresaValue, InputOutput<DefaultWorksheet, string[]>>
+> => {
   const faturamentos = (
     [
       [2018, "Faturamento 2018 (RFB)"],
@@ -77,33 +58,144 @@ export const mapEmpresa = async (
     ] as FaturamentoEntry[]
   )
     .map(([ano, key]) => [ano, data[key]] as [number, string])
-    .map(([ano, value]) => ({
-      input: [ano, value] as [number, string],
-      output: Faturamento.create(
-        ano,
+    .map(([anoFiscal, value]) => ({
+      anoFiscal,
+      valor:
         parseInt(value.slice(0, value.indexOf(",")).replace(/\D/g, ""), 10) *
-          100
-      ),
+        100,
     }));
 
-  const result = Empresa.create({
-    ...id,
-    razaoSocial,
-    nomeFantasia,
+  const estrangeira = data["CNPJ"].toLowerCase().includes("exterior");
+  const idEstrangeira =
+    !!estrangeira &&
+    parseInt(data["CNPJ"].toLowerCase().replace(/\D/g, ""), 10);
+
+  const incubadora = getIncubadora(
+    data["Em qual incubadora ou Parque Tecnológico?"].split("-")[0].trim()
+  );
+
+  const estado = getEstadoIncubacao(
+    data["A empresa está ou esteve em alguma incubadora ou Parque tecnológico?"]
+      .replace("Sim. A empresa está", "")
+      .trim()
+  );
+
+  const incubacoes = incubadora &&
+    estado && [
+      {
+        incubadora,
+        estado,
+      },
+    ];
+
+  const socios = [
+    [
+      data[
+        "Nome completo do empreendedor que possuiu ou mantém vínculo com a USP (sem abreviações)"
+      ],
+      data["Email do empreendedor"],
+      data["Telefone (fixo ou celular)"],
+      data["Qual tipo de vínculo já possuiu ou ainda mantém com a USP?"],
+      data["Número USP (Sócio 1)"],
+      data[
+        "Com qual instituto, escola ou centro é o vínculo atual ou mais recente?"
+      ],
+    ],
+    ...Array(4)
+      .fill(null)
+      .map((_, i) => [
+        data[`Nome completo (Sócio ${i + 2})`],
+        undefined,
+        undefined,
+        data[
+          `Qual o tipo de vínculo possuiu ou mantém com a USP (Sócio ${i + 2})?`
+        ],
+        data[`Número USP (Sócio ${i + 2})`],
+        data[
+          `Com qual instituto, escola ou centro é o vínculo atual ou mais recente?__${
+            i + 1
+          }`
+        ],
+      ]),
+  ].map(([nome, email, telefone, vinculo, nusp, instituto]) =>
+    extractSocio(nome, email, telefone, vinculo, nusp, instituto)
+  );
+
+  const anoFundacao = parseInt(data["Ano de fundação"], 10);
+
+  const result = EmpresaFactory.create({
+    cnpj: data["CNPJ"],
+    estrangeira,
+    idEstrangeira,
+    razaoSocial: data["Razão social da empresa"],
+    nomeFantasia: data["Nome fantasia da empresa"],
     anoFundacao,
-    atividadePrincipal,
-    atividadeSecundaria: [],
-    situacao,
-    faturamentos: faturamentos
-      .map((f) => f.output)
-      .filter((f) => f.isOk())
-      .map((f) => f.unwrap()),
+    atividadePrincipal:
+      data["CNAE (Classificação Nacional de Atividades Econômicas) da empresa"],
+    situacao: data["Status operacional da empresa"],
+    faturamentos,
+    incubacoes,
+    socios,
+    historicoQuadroDeColaboradores: [
+      {
+        anoFiscal: new Date(data["Carimbo de data/hora"]).getFullYear(),
+        valor: parseInt(data["Número total de colaboradores"], 10),
+      },
+      {
+        anoFiscal: 2019,
+        valor: parseInt(data["Nº colaboradores (RAIS 2019 )"], 10),
+      },
+      {
+        anoFiscal: 2018,
+        valor: parseInt(data["Nº colaboradores (RAIS 2018 ) )"], 10),
+      },
+      {
+        anoFiscal: 2015,
+        valor: parseInt(data["Nº colaboradores (RAIS 2015 ) )"], 10),
+      },
+    ],
+    historicoInvestimentos: [
+      extractInvestimento(
+        OrigemInvestimento.PROPRIO,
+        anoFundacao,
+        data["Valor do investimento próprio (R$)"]
+      ),
+      extractInvestimento(
+        OrigemInvestimento.ANJO,
+        anoFundacao,
+        data["Valor do investimento-anjo (R$)"]
+      ),
+      extractInvestimento(
+        OrigemInvestimento.VC,
+        anoFundacao,
+        data["Valor do Venture Capital (R$)"]
+      ),
+      extractInvestimento(
+        OrigemInvestimento.PE,
+        anoFundacao,
+        data["Valor do Private Equity (R$)"]
+      ),
+      extractInvestimento(
+        OrigemInvestimento.PIPEFAPESP,
+        anoFundacao,
+        data["Valor do PIPE-FAPESP (R$)"]
+      ),
+      extractInvestimento(
+        OrigemInvestimento.PIPEFAPESP,
+        anoFundacao,
+        data["Outros investimentos (R$)"]
+      ),
+    ].filter((i) => i.valor > 0),
   });
 
-  if (result.isFail()) return Result.fail(result.unwrapFail());
+  if (result.isFail())
+    return Result.fail({
+      input: data,
+      output: result.unwrapFail(),
+    });
 
   return Result.ok({
-    root: result.unwrap(),
-    faturamentos,
+    input: data,
+    output: result.unwrap(),
   });
 };
