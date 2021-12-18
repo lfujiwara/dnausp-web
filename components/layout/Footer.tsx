@@ -1,4 +1,4 @@
-import { Box, Center, Heading, Link, Text } from "@chakra-ui/layout";
+import { Box, Center, Link, Text } from "@chakra-ui/layout";
 
 export const Footer = () => {
   return (
@@ -8,6 +8,12 @@ export const Footer = () => {
           Trabalho realizado para a disciplina{" "}
           <Link href="https://www.ime.usp.br/~nina/mac0499">MAC0499</Link>{" "}
           (IME-USP) - Trabalho de Formatura Supervisionado
+        </Text>
+      </Center>
+      <Center>
+        <Text>
+          Esta plataforma está em fase de desenvolvimento e possui acesso
+          restrito. Os dados apresentados não são finais.
         </Text>
       </Center>
     </Box>

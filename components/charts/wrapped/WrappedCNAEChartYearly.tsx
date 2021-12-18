@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { Center, HStack, Text } from "@chakra-ui/layout";
 import { WrappedCNAEChartFun } from "./WrappedCNAEChartFun";
-import { useCNAEStatsQueryYearly } from "../../../backend/queries/CNAEStatsQueryYearly";
+import { useCNAEStatsQueryYearly } from "../../../backend/queries/deprecated/CNAEStatsQueryYearly";
 import { useMemo, useState } from "react";
 
 type Datum = {
@@ -45,7 +45,8 @@ export function WrappedCNAEChartYearly() {
   const [yearDelta, setYearDelta] = useState(0);
   const [useAccumulated, setUseAccumulated] = useState(false);
 
-  const data = query.data?.sort((a, b) => a.year - b.year);
+  const data = [...(query.data || [])];
+  data.sort((a, b) => a.year - b.year);
   const accumulatedData = useMemo(() => {
     if (!data) return undefined;
     let acc: Datum[] = [];

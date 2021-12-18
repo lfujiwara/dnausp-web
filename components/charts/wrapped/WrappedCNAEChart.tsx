@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useCNAEStatsQuery } from "../../../backend/queries/CNAEStatsQuery";
+import { useCNAEStatsQuery } from "../../../backend/queries/deprecated/CNAEStatsQuery";
 import { Box, Container, Heading } from "@chakra-ui/react";
 import { Center } from "@chakra-ui/layout";
 import { FilterAggregate } from "../filters/filter-aggregate";

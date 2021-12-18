@@ -1,29 +1,33 @@
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import { WrapRequireBackendAuth } from "@auth/backend/require-backend-auth";
 import Head from "next/head";
-import { WrappedCNAEChart } from "../components/charts/wrapped/WrappedCNAEChart";
-import { WrappedCNAEChartYearly } from "../components/charts/wrapped/WrappedCNAEChartYearly";
+import { Box, Select } from "@chakra-ui/react";
+import { charts } from "../components/charts/display/charts";
+import { useState } from "react";
 
 function DashboardPage() {
+  const [chart, setChart] = useState(charts.find(() => true)?.name || "");
+
+  const Component = charts.find(({ name }) => name === chart)?.chart;
+
   return (
     <>
       <Head>
-        <title>Relatório</title>
+        <title>Gráficos</title>
       </Head>
-      <Tabs>
-        <TabList>
-          <Tab>Distribuição CNAE</Tab>
-          <Tab>Distribuição CNAE (por ano/acumulado)</Tab>
-        </TabList>
-        <TabPanels>
-          <TabPanel>
-            <WrappedCNAEChart />
-          </TabPanel>
-          <TabPanel>
-            <WrappedCNAEChartYearly />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+      <Box p={4}>
+        <Select
+          placeholder="Selecione o gráfico"
+          value={chart}
+          onChange={(evt) => setChart(evt.target.value)}
+        >
+          {charts.map(({ name }) => (
+            <option key={name} value={name}>
+              {name}
+            </option>
+          ))}
+        </Select>
+        {Component && <Component />}
+      </Box>
     </>
   );
 }

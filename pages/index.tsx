@@ -32,7 +32,7 @@ export default function SheetsPage() {
               </NextLink>
             </Link>
             <Link as="span">
-              <NextLink href="/report">Relatórios</NextLink>
+              <NextLink href="/report">Gráficos</NextLink>
             </Link>
             <Link as="span">
               <NextLink href="/consulta-cnpj">Consulta CNPJ</NextLink>

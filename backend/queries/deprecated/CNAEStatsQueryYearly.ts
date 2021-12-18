@@ -1,4 +1,4 @@
-import { useAxios } from "../../hooks/axios";
+import { useAxios } from "../../../hooks/axios";
 import { useQuery } from "react-query";
 
 export const useCNAEStatsQueryYearly = () => {
