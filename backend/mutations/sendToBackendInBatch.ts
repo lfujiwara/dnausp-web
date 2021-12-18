@@ -20,10 +20,10 @@ export const useSendToBackendInBatch = () => {
         totalCount: 0,
       });
     const queue = new Queue({
-      concurrent: 10,
+      concurrent: 5,
       start: false,
     });
-    const requestBatchSize = 50;
+    const requestBatchSize = 10;
 
     const batches = empresas.reduce((acc, empresa, index) => {
       if (index % requestBatchSize === 0) {

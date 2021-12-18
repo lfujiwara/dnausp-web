@@ -47,9 +47,7 @@ const extractInvestimento = (
 
 export const mapEmpresa = async (
   data: DefaultWorksheet
-): Promise<
-  Result<MapEmpresaValue, InputOutput<DefaultWorksheet, string[]>>
-> => {
+): Promise<Result<MapEmpresaValue, InputOutput<DefaultWorksheet, string[]>>> => {
   const faturamentos = (
     [
       [2018, "Faturamento 2018 (RFB)"],
@@ -92,14 +90,14 @@ export const mapEmpresa = async (
     [
       data[
         "Nome completo do empreendedor que possuiu ou mantém vínculo com a USP (sem abreviações)"
-      ],
+        ],
       data["Email do empreendedor"],
       data["Telefone (fixo ou celular)"],
       data["Qual tipo de vínculo já possuiu ou ainda mantém com a USP?"],
       data["Número USP (Sócio 1)"],
       data[
         "Com qual instituto, escola ou centro é o vínculo atual ou mais recente?"
-      ],
+        ],
     ],
     ...Array(4)
       .fill(null)
@@ -109,13 +107,13 @@ export const mapEmpresa = async (
         undefined,
         data[
           `Qual o tipo de vínculo possuiu ou mantém com a USP (Sócio ${i + 2})?`
-        ],
+          ],
         data[`Número USP (Sócio ${i + 2})`],
         data[
           `Com qual instituto, escola ou centro é o vínculo atual ou mais recente?__${
             i + 1
           }`
-        ],
+          ],
       ]),
   ].map(([nome, email, telefone, vinculo, nusp, instituto]) =>
     extractSocio(nome, email, telefone, vinculo, nusp, instituto)
@@ -140,7 +138,7 @@ export const mapEmpresa = async (
       anoFiscal: 2015,
       valor: parseInt(data["Nº colaboradores (RAIS 2015 ) )"], 10),
     },
-  ].reduce((acc, { anoFiscal, valor }) => {
+  ].reduce((acc, {anoFiscal, valor}) => {
     acc[anoFiscal] = {
       anoFiscal,
       valor,
@@ -150,6 +148,13 @@ export const mapEmpresa = async (
   const historicoQuadroDeColaboradores = Object.values(
     _historicoQuadroDeColaboradores
   );
+
+  if (estrangeira) return Result.fail(
+    {
+      input: data,
+      output: ['Empresas estrangeira estão desativadas']
+    }
+  )
 
   const result = EmpresaFactory.create({
     cnpj: data["CNPJ"],

@@ -12,7 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "@chakra-ui/react": "^1.6.9",
-    "@dnausp/core": "^0.0.1-alpha.27",
+    "@dnausp/core": "^0.0.1-alpha.30",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@nivo/bar": "^0.75.0",
