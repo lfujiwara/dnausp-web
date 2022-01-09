@@ -39,11 +39,14 @@ const extractInvestimento = (
   origem: OrigemInvestimento,
   anoFiscal: number,
   valor: string
-) => ({
-  origem,
-  anoFiscal,
-  valor: parseInt(valor.replace(/\D/g, "").replace(",", "."), 10),
-});
+) => {
+  valor = valor + "";
+  return {
+    origem,
+    anoFiscal,
+    valor: parseInt(valor.replace(/\D/g, "").replace(",", "."), 10),
+  };
+};
 
 export const mapEmpresa = async (
   data: DefaultWorksheet
@@ -57,7 +60,7 @@ export const mapEmpresa = async (
       [2020, "Qual foi o faturamento da empresa em 2020? (R$)"],
     ] as FaturamentoEntry[]
   )
-    .map(([ano, key]) => [ano, data[key]] as [number, string])
+    .map(([ano, key]) => [ano, data[key] + ""] as [number, string])
     .map(([anoFiscal, value]) => ({
       anoFiscal,
       valor:
