@@ -73,9 +73,13 @@ export const mapEmpresa = async (
     !!estrangeira &&
     parseInt(data["CNPJ"].toLowerCase().replace(/\D/g, ""), 10);
 
-  const incubadora = getIncubadora(
-    data["Em qual incubadora ou Parque Tecnológico?"].split("-")[0].trim()
-  );
+  const incubadorasRaw = data["Em qual incubadora ou Parque Tecnológico?"]
+    .split("-")[0]
+    .trim();
+  const incubadoras = incubadorasRaw
+    .split(";")
+    .map((incubadora) => incubadora.trim())
+    .map((incubadora) => getIncubadora(incubadora));
 
   const estado = getEstadoIncubacao(
     data["A empresa está ou esteve em alguma incubadora ou Parque tecnológico?"]
@@ -83,13 +87,12 @@ export const mapEmpresa = async (
       .trim()
   );
 
-  const incubacoes = incubadora &&
-    estado && [
-      {
-        incubadora,
-        estado,
-      },
-    ];
+  const incubacoes = incubadoras
+    .map((incubadora) => ({
+      incubadora,
+      estado,
+    }))
+    .filter((incubacao) => !!incubacao.incubadora);
 
   const socios = [
     [
