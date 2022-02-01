@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { DefaultWorksheet } from "@sheets/defaults/default-worksheet";
 import {
   Box,
@@ -15,6 +15,7 @@ import { EmpresasTable } from "../tables/EmpresasTable";
 import { EmpresasErrorTable } from "../tables/EmpresasErrorTable";
 import { useSendToBackendInBatch } from "../../backend/mutations/sendToBackendInBatch";
 import { useLoadingState } from "../../hooks/useLoading";
+import { Empresa } from "@dnausp/core";
 
 type State = any;
 
@@ -58,6 +59,21 @@ export const DomainMapper: FC<{ inputs: DefaultWorksheet[] }> = ({
       .then(hookL.setLoaded)
       .catch(hookL.setError);
   };
+
+  useEffect(() => {
+    if (!data?.ok) return;
+    const faturamentos = data.ok
+      .map((r) => r.output)
+      .map((e: Empresa) => e.historicoFaturamentos.valores)
+      .flat();
+    console.log(faturamentos);
+    const mediaAno = (ano) => {
+      const arr = faturamentos.filter((f) => f?.anoFiscal === ano);
+      return arr.reduce((acc, cur) => acc + cur.valor, 0) / arr.length;
+    };
+
+    console.log(mediaAno(2018), mediaAno(2019), mediaAno(2020));
+  }, [data]);
 
   return (
     <>

@@ -16,7 +16,10 @@ export const makeBackendQuery =
   <Req, Res>(route) =>
   (req: Req) => {
     const axios = useAxios();
-    return useQuery<Res>(
+    return useQuery<{
+      count: number;
+      data: Res;
+    }>(
       [route, req],
       () =>
         axios

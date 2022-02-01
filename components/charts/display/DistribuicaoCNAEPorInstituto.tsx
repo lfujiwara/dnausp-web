@@ -12,7 +12,7 @@ import { useState } from "react";
 import Select from "react-select";
 import { cnaeLabeler } from "@domain/util/cnae-labeler";
 import { AccordionHelper } from "../AccordionHelper";
-import { Container } from "@chakra-ui/layout";
+import { Container, Text } from "@chakra-ui/layout";
 
 const institutoOptions = Object.keys(Instituto).map((i) => ({
   value: i,
@@ -43,7 +43,7 @@ export const DistribuicaoCNAEPorInstituto = () => {
     Instituto.FEARP,
   ]);
   const query = useDistribuicaoCnaePorInstituto();
-  const data = query.data || {};
+  const data = query.data?.data || {};
   const processedData = processData(data, CnaeGroupingLevel.SECAO).filter(
     ({ instituto }) => institutos.includes(instituto as Instituto)
   );
@@ -78,6 +78,11 @@ export const DistribuicaoCNAEPorInstituto = () => {
         />
       </Box>
       <Container pb="4">
+        {query.data && (
+          <Text mb="2">
+            Exibindo dados de <strong>{query.data?.count}</strong> empresas
+          </Text>
+        )}
         <AccordionHelper
           content={[
             {

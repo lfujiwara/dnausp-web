@@ -25,19 +25,21 @@ export const DistribuicaoCNAEPorAnoFundacao = () => {
   const [yearDelta, setYearDelta] = useState(0);
   const [useAccumulated, setUseAccumulated] = useState(false);
 
-  const minYear = query.data?.slice(0, 1)?.[0]?.ano || 0;
-  const maxYear = query.data?.slice(-1)[0]?.ano || 0;
+  const queryData = query.data?.data;
+
+  const minYear = queryData?.slice(0, 1)?.[0]?.ano || 0;
+  const maxYear = queryData?.slice(-1)[0]?.ano || 0;
 
   const maxRange = maxYear - minYear;
   const selectedYear = minYear + yearDelta;
 
   const mergedData = mergeMultipleObjects(
-    query.data
+    queryData
       ?.filter(({ ano }) => ano <= selectedYear)
       .map((d) => d.distribuicao) || []
   );
   const currentData =
-    query.data?.find(({ ano }) => ano === selectedYear)?.distribuicao || {};
+    queryData?.find(({ ano }) => ano === selectedYear)?.distribuicao || {};
 
   const { level, setLevel } = useGroupCnaeDistribution({});
 
@@ -71,6 +73,11 @@ export const DistribuicaoCNAEPorAnoFundacao = () => {
         />
       </Box>
       <Container pb="4">
+        {!!query.data && (
+          <Text mb="2">
+            Exibindo dados de <strong>{query.data?.count}</strong> empresas
+          </Text>
+        )}
         <AccordionHelper
           content={[
             {

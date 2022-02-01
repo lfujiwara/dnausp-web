@@ -1,6 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import { useDistribuicaoGeneroQuery } from "../../../backend/queries/all-queries";
 import { ResponsivePie } from "@nivo/pie";
+import { Container, Text } from "@chakra-ui/layout";
 
 export const DistribuicaoGenero = () => {
   const query = useDistribuicaoGeneroQuery();
@@ -9,7 +10,7 @@ export const DistribuicaoGenero = () => {
     <Box>
       <Box w="full" h="60vh" maxH="100vh">
         <ResponsivePie
-          data={(query.data || []).map(({ genero, qtd }) => ({
+          data={(query.data?.data || []).map(({ genero, qtd }) => ({
             id: genero,
             label: genero === "M" ? "Masculino" : "Feminino",
             value: qtd,
@@ -30,6 +31,13 @@ export const DistribuicaoGenero = () => {
           id={(arc) => arc.label}
         />
       </Box>
+      <Container>
+        {query.data && (
+          <Text mb="2">
+            Exibindo dados de <strong>{query.data?.count}</strong> sócios
+          </Text>
+        )}
+      </Container>
     </Box>
   );
 };

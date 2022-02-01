@@ -17,27 +17,24 @@ import { Container, HStack } from "@chakra-ui/layout";
 
 export const DistribuicaoGeneroPorAnoFundacao = () => {
   const query = useDistribuicaoGeneroPorAnoFundacaoQuery();
+  const queryData = query.data?.data;
 
   const minY =
-    query.data?.reduce(
-      (a, { anoFundacao }) => Math.min(anoFundacao, a),
-      1930
-    ) ?? 0;
+    queryData?.reduce((a, { anoFundacao }) => Math.min(anoFundacao, a), 1930) ??
+    0;
   const maxY =
-    query.data?.reduce(
-      (a, { anoFundacao }) => Math.max(anoFundacao, a),
-      1930
-    ) ?? 0;
+    queryData?.reduce((a, { anoFundacao }) => Math.max(anoFundacao, a), 1930) ??
+    0;
 
   const sel = useAnoSelector(minY, maxY);
 
   const [useAccumulatedData, setUseAccumulatedData] = useState(false);
   let data =
-    query.data?.find((d) => d.anoFundacao === sel.selectedYear)?.distribuicao ||
+    queryData?.find((d) => d.anoFundacao === sel.selectedYear)?.distribuicao ||
     [];
-  if (query.data && useAccumulatedData)
+  if (queryData && useAccumulatedData)
     data = Object.entries(
-      query.data
+      queryData
         .filter(({ anoFundacao }) => anoFundacao <= sel.selectedYear)
         .map((p) => p.distribuicao)
         .flat()
@@ -78,6 +75,11 @@ export const DistribuicaoGeneroPorAnoFundacao = () => {
       </Box>
 
       <Container pb={4}>
+        {query.data && (
+          <Text mb="2">
+            Exibindo dados de <strong>{query.data?.count}</strong> sócios
+          </Text>
+        )}
         <AccordionHelper
           content={[
             {

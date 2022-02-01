@@ -9,7 +9,7 @@ import {
   InstitutoNome,
 } from "@dnausp/core";
 import { useState } from "react";
-import { Container } from "@chakra-ui/layout";
+import { Container, Text } from "@chakra-ui/layout";
 
 const institutoOptions = Object.keys(Instituto).map((i) => ({
   value: i,
@@ -36,8 +36,9 @@ export const DistribuicaoGeneroPorInstituto = () => {
     Instituto.FEARP,
   ]);
   const query = useDistribuicaoGeneroPorInstitutoQuery();
+  const queryData = query.data?.data;
 
-  const processedData = processData(query.data || {}).filter((d) =>
+  const processedData = processData(queryData || {}).filter((d) =>
     institutos.includes(d.instituto as Instituto)
   );
 
@@ -71,6 +72,11 @@ export const DistribuicaoGeneroPorInstituto = () => {
         />
       </Box>
       <Container pb={4}>
+        {
+          <Text mb="2">
+            Exibindo dados de <strong>{query.data?.count}</strong> sócios
+          </Text>
+        }
         <Select
           placeholder="Selecione os institutos"
           options={institutoOptions}

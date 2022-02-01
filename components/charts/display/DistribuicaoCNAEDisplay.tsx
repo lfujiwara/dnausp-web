@@ -9,13 +9,13 @@ import { EmpresaFilter } from "../EmpresaFilter";
 import { CnaeGroupingLevel } from "@domain/util/cnae-grouper";
 import { AccordionHelper } from "../AccordionHelper";
 import { CnaeGroupLevelSelect } from "../CnaeGroupLevelSelect";
-import { Container } from "@chakra-ui/layout";
+import { Container, Text } from "@chakra-ui/layout";
 
 export const DistribuicaoCNAEDisplay = () => {
   const [filter, setFilter] = useState<FilterEmpresa>({});
-  const fatQuery = useDistribuicaoCnaeQuery(filter);
+  const query = useDistribuicaoCnaeQuery(filter);
   const { data, level, setLevel } = useGroupCnaeDistribution(
-    fatQuery.data || {}
+    query.data?.data || {}
   );
 
   const chartData = Object.entries(data).map(([id, value]) => ({
@@ -46,6 +46,11 @@ export const DistribuicaoCNAEDisplay = () => {
         />
       </Box>
       <Container pb="4">
+        {query.data && (
+          <Text mb="2">
+            Exibindo dados de <strong>{query.data?.count}</strong> empresas
+          </Text>
+        )}
         <AccordionHelper
           content={[
             {
@@ -53,7 +58,7 @@ export const DistribuicaoCNAEDisplay = () => {
               content: (
                 <EmpresaFilter
                   onApply={(f) => setFilter(f)}
-                  isLoading={fatQuery.isLoading}
+                  isLoading={query.isLoading}
                 />
               ),
             },

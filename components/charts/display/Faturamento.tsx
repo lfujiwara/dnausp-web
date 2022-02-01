@@ -3,7 +3,7 @@ import { FilterEmpresa } from "@dnausp/core";
 import { useFaturamentoQuery } from "../../../backend/queries/all-queries";
 import { AccordionHelper } from "../AccordionHelper";
 import { EmpresaFilter } from "../EmpresaFilter";
-import { Container } from "@chakra-ui/layout";
+import { Container, Text } from "@chakra-ui/layout";
 import { Box } from "@chakra-ui/react";
 import { ResponsiveBar } from "@nivo/bar";
 
@@ -14,15 +14,14 @@ const formatter = Intl.NumberFormat("pt-BR", {
 
 export const Faturamento = () => {
   const [filter, setFilter] = useState<FilterEmpresa>({});
-  const fatQuery = useFaturamentoQuery(filter);
+  const query = useFaturamentoQuery(filter);
+  const queryData = query.data?.data || [];
 
   return (
     <>
       <Box w="full" h="60vh" maxH="100vh">
         <ResponsiveBar
-          data={
-            fatQuery.data?.map((v) => ({ ...v, valor: v.valor / 100 })) || []
-          }
+          data={queryData.map((v) => ({ ...v, valor: v.valor / 100 })) || []}
           keys={["valor"]}
           indexBy="ano"
           label={(d) => formatter.format(d.data.valor)}
@@ -49,6 +48,21 @@ export const Faturamento = () => {
         />
       </Box>
       <Container pb="4">
+        {
+          <Text mb="2">
+            Exibindo dados de <strong>{query.data?.count}</strong> registros de
+            faturamento.{" "}
+            {queryData && (
+              <ul>
+                {queryData.map(({ ano, count }: any) => (
+                  <li key={ano}>
+                    {count} registros de faturamento no ano {ano}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Text>
+        }
         <AccordionHelper
           content={[
             {
@@ -56,7 +70,7 @@ export const Faturamento = () => {
               content: (
                 <EmpresaFilter
                   onApply={(f) => setFilter(f)}
-                  isLoading={fatQuery.isLoading}
+                  isLoading={query.isLoading}
                 />
               ),
             },
